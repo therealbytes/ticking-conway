@@ -17,6 +17,14 @@
       "writeAccess": [
         "ConwayStateComponent"
       ]
+    },
+    {
+      "name": "InitSystem",
+      "writeAccess": [
+        "CellBitSizeComponent",
+        "DimensionsComponent"
+      ],
+      "initialize": "new bytes(0)"
     }
   ]
 }
