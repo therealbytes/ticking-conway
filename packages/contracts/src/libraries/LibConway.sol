@@ -1,11 +1,22 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity >=0.8.0;
 
-contract Conway {
+struct Grid {
+  uint256 x;
+  uint256 y;
+  uint256 cellBitSize;
+  bytes state;
+}
+
+library Conway {
+  function step(Grid memory grid) public view {
+    grid.state = step(grid.x, grid.y, grid.cellBitSize, grid.state);
+  }
+
   function step(
     uint256 x,
     uint256 y,
-    uint256 cellSize,
+    uint256 cellBitSize,
     bytes memory state
   ) public view returns (bytes memory) {
     uint256 len = state.length;
@@ -13,14 +24,14 @@ contract Conway {
     uint256 nWords = len / 32 + (rem == 0 ? 0 : 1);
     bytes memory result;
     uint256 p;
-    // set pointer and store x, y, and cellSize in free memory
+    // set pointer and store x, y, and cellBitSize in free memory
     assembly {
       // set free memory pointer
       p := mload(0x40)
       // store data
       mstore(p, x) // X
       mstore(add(p, 0x20), y) // Y
-      mstore(add(p, 0x40), cellSize) // cellSize
+      mstore(add(p, 0x40), cellBitSize) // cellBitSize
     }
     // copy state to free memory
     for (uint256 ii = 0; ii < nWords; ii++) {
