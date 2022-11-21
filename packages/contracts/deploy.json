@@ -1,4 +1,22 @@
 {
-  "components": ["ExampleComponent"],
-  "systems": [{ "name": "ComponentDevSystem", "writeAccess": ["*"] }]
+  "components": [
+    "CellBitSizeComponent",
+    "ConwayStateComponent",
+    "DimensionsComponent",
+    "PositionComponent"
+  ],
+  "systems": [
+    {
+      "name": "ComponentDevSystem",
+      "writeAccess": [
+        "*"
+      ]
+    },
+    {
+      "name": "TickSystem",
+      "writeAccess": [
+        "ConwayStateComponent"
+      ]
+    }
+  ]
 }
