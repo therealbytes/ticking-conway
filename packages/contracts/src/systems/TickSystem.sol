@@ -2,11 +2,10 @@
 pragma solidity >=0.8.0;
 import "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { IUint256Component } from "solecs/interfaces/IUint256Component.sol";
-import { IComponent } from "solecs/interfaces/IComponent.sol";
 import { getAddressById } from "solecs/utils.sol";
 
 import { Coord } from "../types.sol";
+import { GridId, TickPredeployAddr } from "../constants.sol";
 import { Conway } from "../libraries/LibConway.sol";
 import { ConwayStateComponent, ID as ConwayStateComponentID } from "../components/ConwayStateComponent.sol";
 import { DimensionsComponent, ID as DimensionsComponentID } from "../components/DimensionsComponent.sol";
@@ -17,8 +16,13 @@ uint256 constant ID = uint256(keccak256("conway.system.tick"));
 contract TickSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
+  function tick() external {
+    require(msg.sender == TickPredeployAddr, "TickSystem: only tick predeploy can call tick()");
+    execute(abi.encodePacked());
+  }
+
   function execute(bytes memory arguments) public returns (bytes memory) {
-    uint256 entity = abi.decode(arguments, (uint256));
+    uint256 entity = GridId;
     // Get components
     DimensionsComponent dimensionsComponent = DimensionsComponent(getAddressById(components, DimensionsComponentID));
     CellBitSizeComponent cellBitSizeComponent = CellBitSizeComponent(
@@ -38,9 +42,5 @@ contract TickSystem is System {
     );
     // Set new state
     conwayComponent.set(entity, newState);
-  }
-
-  function executeTyped(uint256 entity) public returns (bytes memory) {
-    return execute(abi.encode(entity));
   }
 }
