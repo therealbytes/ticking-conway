@@ -6,9 +6,10 @@ import { IUint256Component } from "solecs/interfaces/IUint256Component.sol";
 import { IComponent } from "solecs/interfaces/IComponent.sol";
 import { getAddressById } from "solecs/utils.sol";
 
+import { Coord } from "../types.sol";
 import { Conway } from "../libraries/LibConway.sol";
 import { ConwayStateComponent, ID as ConwayStateComponentID } from "../components/ConwayStateComponent.sol";
-import { Coord, DimensionsComponent, ID as DimensionsComponentID } from "../components/DimensionsComponent.sol";
+import { DimensionsComponent, ID as DimensionsComponentID } from "../components/DimensionsComponent.sol";
 import { CellBitSizeComponent, ID as CellBitSizeComponentID } from "../components/CellBitSizeComponent.sol";
 
 uint256 constant ID = uint256(keccak256("conway.system.tick"));
