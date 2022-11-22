@@ -22,7 +22,8 @@
       "name": "InitSystem",
       "writeAccess": [
         "CellBitSizeComponent",
-        "DimensionsComponent"
+        "DimensionsComponent",
+        "ConwayStateComponent"
       ],
       "initialize": "new bytes(0)"
     }
