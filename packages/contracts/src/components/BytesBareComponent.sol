@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity >=0.8.0;
-import "solecs/Component.sol";
+import "solecs/BareComponent.sol";
 
-contract BytesComponent is Component {
-  constructor(address world, uint256 id) Component(world, id) {}
+contract BytesBareComponent is BareComponent {
+  constructor(address world, uint256 id) BareComponent(world, id) {}
 
   function getSchema() public pure override returns (string[] memory keys, LibTypes.SchemaValue[] memory values) {
     keys = new string[](1);
@@ -11,6 +11,10 @@ contract BytesComponent is Component {
 
     keys[0] = "value";
     values[0] = LibTypes.SchemaValue.BYTES;
+  }
+
+  function setValue(uint256 entity, bytes memory value) public {
+    set(entity, abi.encode(value));
   }
 
   function getValue(uint256 entity) public view returns (bytes memory) {
