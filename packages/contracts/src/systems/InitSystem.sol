@@ -8,6 +8,7 @@ import { Coord } from "../types.sol";
 import { GridId, GridDimX, GridDimY, GridCellBitSize } from "../constants.sol";
 import { DimensionsComponent, ID as DimensionsComponentID } from "../components/DimensionsComponent.sol";
 import { CellBitSizeComponent, ID as CellBitSizeComponentID } from "../components/CellBitSizeComponent.sol";
+import { ConwayStateComponent, ID as ConwayStateComponentID } from "../components/ConwayStateComponent.sol";
 
 uint256 constant ID = uint256(keccak256("conway.system.init"));
 
@@ -16,13 +17,25 @@ contract InitSystem is System {
 
   function execute(bytes memory) public returns (bytes memory) {
     uint256 entity = GridId;
+    // Check constants
     // Get components
     DimensionsComponent dimensionsComponent = DimensionsComponent(getAddressById(components, DimensionsComponentID));
     CellBitSizeComponent cellBitSizeComponent = CellBitSizeComponent(
       getAddressById(components, CellBitSizeComponentID)
     );
-    // Get values
+    ConwayStateComponent conwayStateComponent = ConwayStateComponent(
+      getAddressById(components, ConwayStateComponentID)
+    );
+    // Set values
     dimensionsComponent.set(entity, Coord(GridDimX, GridDimY));
     cellBitSizeComponent.set(entity, GridCellBitSize);
+    uint256 nCells = uint256(int256(GridDimX)) * uint256(int256(GridDimY));
+    uint256 stateSize = (nCells * GridCellBitSize) / 8;
+    if ((8 * stateSize) / GridCellBitSize < nCells) {
+      stateSize += 1;
+    }
+    bytes memory state = new bytes(stateSize);
+    state[0] = 0xff;
+    conwayStateComponent.set(entity, state);
   }
 }
