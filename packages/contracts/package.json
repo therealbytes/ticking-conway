@@ -12,7 +12,7 @@
     "solhint": "solhint --config ./.solhint.json 'src/**/*.sol' --fix",
     "test": "forge test",
     "----- BUILD/DEPLOY -----": "---------------------------",
-    "start": "yarn start:anvil",
+    "start": "yarn deploy:tick",
     "start:hardhat": "run-p -l hardhat:node deploy:hardhat",
     "start:anvil": "run-p -l anvil:node deploy:anvil",
     "build:force": "yarn codegen && rimraf out && forge build --force && yarn dist && yarn types",
