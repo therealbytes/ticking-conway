@@ -16,6 +16,10 @@ uint256 constant ID = uint256(keccak256("conway.system.tick"));
 contract TickSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
+  function tickDebug() external {
+    execute(abi.encodePacked());
+  }
+  
   function tick() external {
     require(msg.sender == TickPredeployAddr, "TickSystem: only tick predeploy can call tick()");
     execute(abi.encodePacked());
