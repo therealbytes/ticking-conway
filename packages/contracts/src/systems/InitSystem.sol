@@ -36,6 +36,6 @@ contract InitSystem is System {
     }
     bytes memory state = new bytes(stateSize);
     state[0] = 0xff;
-    conwayStateComponent.set(entity, state);
+    conwayStateComponent.setValue(entity, state);
   }
 }

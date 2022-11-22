@@ -19,7 +19,7 @@ contract TickSystem is System {
   function tickDebug() external {
     execute(abi.encodePacked());
   }
-  
+
   function tick() external {
     require(msg.sender == TickPredeployAddr, "TickSystem: only tick predeploy can call tick()");
     execute(abi.encodePacked());
@@ -45,6 +45,6 @@ contract TickSystem is System {
       state
     );
     // Set new state
-    conwayComponent.set(entity, newState);
+    conwayComponent.setValue(entity, newState);
   }
 }
