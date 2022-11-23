@@ -35,7 +35,12 @@ contract InitSystem is System {
       stateSize += 1;
     }
     bytes memory state = new bytes(stateSize);
-    state[0] = 0xff;
+    state[8] = 0x0c;
+    state[9] = 0x30;
+    state[10] = 0x0e;
+    state[11] = 0x70;
+    state[12] = 0x0c;
+    state[13] = 0x30;
     conwayStateComponent.setValue(entity, state);
   }
 }
