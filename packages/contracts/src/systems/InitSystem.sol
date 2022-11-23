@@ -5,7 +5,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
 import { Coord } from "../types.sol";
-import { GridId, GridDimX, GridDimY, GridCellBitSize } from "../constants.sol";
+import { GridId, GridDimX, GridDimY, GridCellBitSize, GridState0 } from "../constants.sol";
 import { DimensionsComponent, ID as DimensionsComponentID } from "../components/DimensionsComponent.sol";
 import { CellBitSizeComponent, ID as CellBitSizeComponentID } from "../components/CellBitSizeComponent.sol";
 import { ConwayStateComponent, ID as ConwayStateComponentID } from "../components/ConwayStateComponent.sol";
@@ -35,12 +35,9 @@ contract InitSystem is System {
       stateSize += 1;
     }
     bytes memory state = new bytes(stateSize);
-    state[8] = 0x0c;
-    state[9] = 0x30;
-    state[10] = 0x0e;
-    state[11] = 0x70;
-    state[12] = 0x0c;
-    state[13] = 0x30;
+    for (uint256 ii = 0; ii < state.length; ii++) {
+      state[ii] = GridState0[ii];
+    }
     conwayStateComponent.setValue(entity, state);
   }
 }
