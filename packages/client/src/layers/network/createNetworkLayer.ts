@@ -1,6 +1,12 @@
 import { createWorld } from "@latticexyz/recs";
 import { setupDevSystems } from "./setup";
-import { createActionSystem, setupMUDNetwork } from "@latticexyz/std-client";
+import {
+  createActionSystem,
+  defineCoordComponent,
+  defineNumberComponent,
+  defineStringComponent,
+  setupMUDNetwork,
+} from "@latticexyz/std-client";
 import { defineLoadingStateComponent } from "./components";
 import { SystemTypes } from "contracts/types/SystemTypes";
 import { SystemAbis } from "contracts/types/SystemAbis.mjs";
@@ -19,6 +25,22 @@ export async function createNetworkLayer(config: GameConfig) {
   // --- COMPONENTS -----------------------------------------------------------------
   const components = {
     LoadingState: defineLoadingStateComponent(world),
+    Position: defineCoordComponent(world, {
+      id: "Position",
+      metadata: { contractId: "conway.component.position" },
+    }),
+    Dimensions: defineCoordComponent(world, {
+      id: "Dimensions",
+      metadata: { contractId: "conway.component.dimensions" },
+    }),
+    CellBitSize: defineNumberComponent(world, {
+      id: "CellBitSize",
+      metadata: { contractId: "conway.component.cellBitSize" },
+    }),
+    ConwayState: defineStringComponent(world, {
+      id: "ConwayState",
+      metadata: { contractId: "conway.component.conwayState" },
+    }),
   };
 
   // --- SETUP ----------------------------------------------------------------------
@@ -43,7 +65,7 @@ export async function createNetworkLayer(config: GameConfig) {
     network,
     actions,
     api: {},
-    dev: setupDevSystems(world, encoders, systems),
+    dev: setupDevSystems(world, encoders as Promise<any>, systems),
   };
 
   return context;
