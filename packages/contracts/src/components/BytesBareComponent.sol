@@ -18,6 +18,7 @@ contract BytesBareComponent is BareComponent {
   }
 
   function getValue(uint256 entity) public view returns (bytes memory) {
-    return getRawValue(entity);
+    bytes memory value = abi.decode(getRawValue(entity), (bytes));
+    return value;
   }
 }
