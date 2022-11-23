@@ -5,6 +5,12 @@ import { NetworkLayer } from "../../network";
 import { Colors, BlockTime } from "../constants";
 import { PhaserLayer } from "../types";
 
+type CellRegistry = {
+  [key: string]: {
+    [key: string]: Phaser.GameObjects.Rectangle;
+  };
+};
+
 function unpackByte(b: number, n: number): number[] {
   if (n < 0 || n > 8 || 8 % n !== 0) {
     throw new Error("invalid pack size");
@@ -22,10 +28,12 @@ export function createConwayStateSystem(network: NetworkLayer, phaser: PhaserLay
     components: { Position, Dimensions, CellBitSize, ConwayState, LastTransition },
   } = network;
 
+  const cellRegistry: CellRegistry = {};
+
   const {
     scenes: {
       Main: {
-        objectPool,
+        phaserScene,
         maps: {
           Main: { tileWidth, tileHeight },
         },
@@ -34,6 +42,11 @@ export function createConwayStateSystem(network: NetworkLayer, phaser: PhaserLay
   } = phaser;
 
   defineComponentSystem(world, ConwayState, ({ entity, value }) => {
+    let entityCellRegistry = cellRegistry[entity];
+    if (!entityCellRegistry) {
+      entityCellRegistry = cellRegistry[entity] = {};
+    }
+
     const conwayState = value[0];
     if (!conwayState) return console.warn("no position");
     const stateBytes = arrayify(conwayState.value);
@@ -51,6 +64,7 @@ export function createConwayStateSystem(network: NetworkLayer, phaser: PhaserLay
     setComponent(LastTransition, entity, nextTransition);
 
     setTimeout(() => {
+      const startTime = Date.now();
       for (let ii = 0; ii < stateBytes.length; ii++) {
         const byte = stateBytes[ii];
         const unpacked = unpackByte(byte, cellBitSize);
@@ -61,19 +75,14 @@ export function createConwayStateSystem(network: NetworkLayer, phaser: PhaserLay
           const { x, y } = tileCoordToPixelCoord({ x: gridX + inX, y: gridY + inY }, tileWidth, tileHeight);
           const cellId = `${entity}.${inX}-${inY}`;
           const color = cell == 1 ? Colors.Black : Colors.White;
-          const object = objectPool.get(cellId, "Rectangle");
-          object.setComponent({
-            id: ConwayState.id,
-            once: (gameObject) => {
-              if (!gameObject.width) {
-                gameObject.setSize(tileWidth, tileHeight);
-                gameObject.setPosition(x, y);
-              }
-              gameObject.setFillStyle(color);
-            },
-          });
+          let cellObj = entityCellRegistry[cellId];
+          if (!cellObj) {
+            cellObj = entityCellRegistry[cellId] = phaserScene.add.rectangle(x, y, tileWidth, tileHeight, color, 1);
+          }
+          cellObj.setFillStyle(color);
         }
       }
+      console.log(`conway state update took ${Date.now() - startTime}ms`);
     }, timeout);
   });
 }
