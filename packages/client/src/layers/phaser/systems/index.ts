@@ -1,0 +1,1 @@
+export { createConwayStateSystem } from "./createConwayStateSystem";
