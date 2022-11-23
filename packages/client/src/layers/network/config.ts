@@ -6,29 +6,42 @@ export type GameConfig = {
   chainId: number;
   jsonRpc: string;
   wsRpc?: string;
-  checkpointUrl?: string;
+  snapshotServiceUrl?: string;
+  streamServiceUrl?: string;
+  relayServiceUrl?: string;
+  faucetServiceUrl?: string;
   devMode: boolean;
   initialBlockNumber: number;
+  blockTime: number;
+  blockExplorer?: string;
 };
 
 export const getNetworkConfig: (networkConfig: GameConfig) => SetupContractConfig = (config) => ({
   clock: {
-    period: 1000,
+    period: config.blockTime,
     initialTime: 0,
-    syncInterval: 5000,
+    syncInterval: 60_000,
   },
   provider: {
+    chainId: config.chainId,
     jsonRpcUrl: config.jsonRpc,
     wsRpcUrl: config.wsRpc,
-    chainId: config.chainId,
     options: {
       batch: false,
+      pollingInterval: 1000,
     },
   },
   privateKey: config.privateKey,
   chainId: config.chainId,
-  checkpointServiceUrl: config.checkpointUrl,
+  snapshotServiceUrl: config.snapshotServiceUrl,
+  streamServiceUrl: config.streamServiceUrl,
+  relayServiceUrl: config.relayServiceUrl,
   initialBlockNumber: config.initialBlockNumber,
   worldAddress: config.worldAddress,
   devMode: config.devMode,
+  blockExplorer: config.blockExplorer,
+  cacheAgeThreshold: 60 * 60, // Invalidate cache after 1h
+  cacheInterval: 120, // Store cache every 2 minutes
+  limitEventsPerSecond: 100_000,
+  snapshotNumChunks: 20,
 });
