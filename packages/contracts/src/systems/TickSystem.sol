@@ -5,7 +5,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
 import { Coord } from "../types.sol";
-import { GridId, TickPredeployAddr } from "../constants.sol";
+import { GridId, TickPredeployAddr, TicksPerCall } from "../constants.sol";
 import { Conway } from "../libraries/LibConway.sol";
 import { ConwayStateComponent, ID as ConwayStateComponentID } from "../components/ConwayStateComponent.sol";
 import { DimensionsComponent, ID as DimensionsComponentID } from "../components/DimensionsComponent.sol";
@@ -37,14 +37,10 @@ contract TickSystem is System {
     Coord memory dimensions = dimensionsComponent.getValue(entity);
     uint256 cellBitSize = cellBitSizeComponent.getValue(entity);
     bytes memory state = conwayComponent.getValue(entity);
-    // Execute step
-    bytes memory newState = Conway.step(
-      uint256(int256(dimensions.x)),
-      uint256(int256(dimensions.y)),
-      cellBitSize,
-      state
-    );
-    // Set new state
-    conwayComponent.setValue(entity, newState);
+    // Execute steps setting state every time
+    for (uint256 ii = 0; ii < TicksPerCall; ii++) {
+      state = Conway.step(uint256(int256(dimensions.x)), uint256(int256(dimensions.y)), cellBitSize, state);
+      conwayComponent.setValue(entity, state);
+    }
   }
 }
