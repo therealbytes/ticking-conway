@@ -7,7 +7,7 @@ import {
   defineStringComponent,
   setupMUDNetwork,
 } from "@latticexyz/std-client";
-import { defineLoadingStateComponent } from "./components";
+import { defineLoadingStateComponent, defineLastTransitionComponent } from "./components";
 import { SystemTypes } from "contracts/types/SystemTypes";
 import { SystemAbis } from "contracts/types/SystemAbis.mjs";
 import { GameConfig, getNetworkConfig } from "./config";
@@ -25,6 +25,7 @@ export async function createNetworkLayer(config: GameConfig) {
   // --- COMPONENTS -----------------------------------------------------------------
   const components = {
     LoadingState: defineLoadingStateComponent(world),
+    LastTransition: defineLastTransitionComponent(world),
     Position: defineCoordComponent(world, {
       id: "Position",
       metadata: { contractId: "conway.component.position" },

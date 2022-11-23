@@ -1,8 +1,8 @@
 import { tileCoordToPixelCoord } from "@latticexyz/phaserx";
-import { defineComponentSystem, getComponentValue, getComponentValueStrict } from "@latticexyz/recs";
+import { defineComponentSystem, getComponentValue, getComponentValueStrict, setComponent } from "@latticexyz/recs";
 import { arrayify } from "@ethersproject/bytes";
 import { NetworkLayer } from "../../network";
-import { Colors } from "../constants";
+import { Colors, BlockTime } from "../constants";
 import { PhaserLayer } from "../types";
 
 function unpackByte(b: number, n: number): number[] {
@@ -19,7 +19,7 @@ function unpackByte(b: number, n: number): number[] {
 export function createConwayStateSystem(network: NetworkLayer, phaser: PhaserLayer) {
   const {
     world,
-    components: { Position, Dimensions, CellBitSize, ConwayState },
+    components: { Position, Dimensions, CellBitSize, ConwayState, LastTransition },
   } = network;
 
   const {
@@ -42,30 +42,38 @@ export function createConwayStateSystem(network: NetworkLayer, phaser: PhaserLay
     const { x: width, y: height } = getComponentValueStrict(Dimensions, entity);
     const { x: gridX, y: gridY } = getComponentValue(Position, entity) || { x: 0, y: 0 };
 
-    console.log("stateBytes", stateBytes);
+    const datenow = Date.now();
+    const lastTransition = getComponentValue(LastTransition, entity);
+    const lastTransitionTime = lastTransition ? lastTransition.timestamp : 0;
+    const nextTransitionTime = Math.max(datenow, lastTransitionTime + BlockTime);
+    const nextTransition: typeof lastTransition = { timestamp: nextTransitionTime };
+    const timeout = nextTransitionTime - datenow;
+    setComponent(LastTransition, entity, nextTransition);
 
-    for (let ii = 0; ii < stateBytes.length; ii++) {
-      const byte = stateBytes[ii];
-      const unpacked = unpackByte(byte, cellBitSize);
-      for (let jj = 0; jj < unpacked.length; jj++) {
-        const cell = unpacked[jj];
-        const cellIdx = ii * unpacked.length + jj;
-        const [inX, inY] = [cellIdx % width, Math.floor(cellIdx / width)];
-        const { x, y } = tileCoordToPixelCoord({ x: gridX + inX, y: gridY + inY }, tileWidth, tileHeight);
-        const cellId = `${entity}.${inX}-${inY}`;
-        const color = cell == 1 ? Colors.Black : Colors.White;
-        const object = objectPool.get(cellId, "Rectangle");
-        object.setComponent({
-          id: ConwayState.id,
-          once: (gameObject) => {
-            if (!gameObject.width) {
-              gameObject.setSize(tileWidth, tileHeight);
-              gameObject.setPosition(x, y);
-            }
-            gameObject.setFillStyle(color);
-          },
-        });
+    setTimeout(() => {
+      for (let ii = 0; ii < stateBytes.length; ii++) {
+        const byte = stateBytes[ii];
+        const unpacked = unpackByte(byte, cellBitSize);
+        for (let jj = 0; jj < unpacked.length; jj++) {
+          const cell = unpacked[jj];
+          const cellIdx = ii * unpacked.length + jj;
+          const [inX, inY] = [cellIdx % width, Math.floor(cellIdx / width)];
+          const { x, y } = tileCoordToPixelCoord({ x: gridX + inX, y: gridY + inY }, tileWidth, tileHeight);
+          const cellId = `${entity}.${inX}-${inY}`;
+          const color = cell == 1 ? Colors.Black : Colors.White;
+          const object = objectPool.get(cellId, "Rectangle");
+          object.setComponent({
+            id: ConwayState.id,
+            once: (gameObject) => {
+              if (!gameObject.width) {
+                gameObject.setSize(tileWidth, tileHeight);
+                gameObject.setPosition(x, y);
+              }
+              gameObject.setFillStyle(color);
+            },
+          });
+        }
       }
-    }
+    }, timeout);
   });
 }

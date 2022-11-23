@@ -1,5 +1,5 @@
-export const TILE_WIDTH = 8;
-export const TILE_HEIGHT = 8;
+export const TILE_WIDTH = 4;
+export const TILE_HEIGHT = 4;
 
 export enum Scenes {
   Main = "Main",
@@ -49,3 +49,5 @@ export const Colors: { [key: string]: number } = {
   Silver: 0xc0c0c0,
   Gray: 0x808080,
 };
+
+export const BlockTime = 1000;
