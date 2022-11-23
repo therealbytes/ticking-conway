@@ -2,7 +2,7 @@ import { tileCoordToPixelCoord } from "@latticexyz/phaserx";
 import { defineComponentSystem, getComponentValue, getComponentValueStrict } from "@latticexyz/recs";
 import { arrayify } from "@ethersproject/bytes";
 import { NetworkLayer } from "../../network";
-import { Colors, Sprites } from "../constants";
+import { Colors } from "../constants";
 import { PhaserLayer } from "../types";
 
 function unpackByte(b: number, n: number): number[] {
@@ -26,7 +26,6 @@ export function createConwayStateSystem(network: NetworkLayer, phaser: PhaserLay
     scenes: {
       Main: {
         objectPool,
-        config,
         maps: {
           Main: { tileWidth, tileHeight },
         },
@@ -54,14 +53,16 @@ export function createConwayStateSystem(network: NetworkLayer, phaser: PhaserLay
         const [inX, inY] = [cellIdx % width, Math.floor(cellIdx / width)];
         const { x, y } = tileCoordToPixelCoord({ x: gridX + inX, y: gridY + inY }, tileWidth, tileHeight);
         const cellId = `${entity}.${inX}-${inY}`;
-
-        const sprite = config.sprites[cell == 1 ? Sprites.Donkey : Sprites.Gold];
-        const object = objectPool.get(cellId, "Sprite");
+        const color = cell == 1 ? Colors.Black : Colors.White;
+        const object = objectPool.get(cellId, "Rectangle");
         object.setComponent({
           id: ConwayState.id,
           once: (gameObject) => {
-            gameObject.setTexture(sprite.assetKey, sprite.frame);
-            gameObject.setPosition(x, y);
+            if (!gameObject.width) {
+              gameObject.setSize(tileWidth, tileHeight);
+              gameObject.setPosition(x, y);
+            }
+            gameObject.setFillStyle(color);
           },
         });
       }

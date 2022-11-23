@@ -1,42 +1,19 @@
-import {
-  defineSceneConfig,
-  AssetType,
-  defineScaleConfig,
-  defineMapConfig,
-  defineCameraConfig,
-} from "@latticexyz/phaserx";
-import { Sprites, Assets, Maps, Scenes, TILE_HEIGHT, TILE_WIDTH } from "./constants";
-import {
-  Tileset as OverworldTileset,
-  TileAnimations as OverworldTileAnimations,
-} from "../phaser/assets/tilesets/overworldTileset";
-import overworldTileset from "./assets/tilesets/overworld-tileset.png";
-import mountainTileset from "./assets/tilesets/mountain-tileset.png";
+import { defineSceneConfig, defineScaleConfig, defineMapConfig, defineCameraConfig } from "@latticexyz/phaserx";
+import { Maps, Scenes, TILE_HEIGHT, TILE_WIDTH } from "./constants";
 const ANIMATION_INTERVAL = 200;
 
 export const phaserConfig = {
   sceneConfig: {
     [Scenes.Main]: defineSceneConfig({
-      assets: {
-        [Assets.OverworldTileset]: { type: AssetType.Image, key: Assets.OverworldTileset, path: overworldTileset },
-        [Assets.MountainTileset]: { type: AssetType.Image, key: Assets.MountainTileset, path: mountainTileset },
-        [Assets.MainAtlas]: {
-          type: AssetType.MultiAtlas,
-          key: Assets.MainAtlas,
-          path: "/atlases/sprites/atlas.json",
-          options: {
-            imagePath: "/atlases/sprites/",
-          },
-        },
-      },
+      assets: {},
       maps: {
         [Maps.Main]: defineMapConfig({
           chunkSize: TILE_WIDTH * 64, // tile size * tile amount
           tileWidth: TILE_WIDTH,
           tileHeight: TILE_HEIGHT,
-          backgroundTile: [OverworldTileset.Water],
+          backgroundTile: [0],
           animationInterval: ANIMATION_INTERVAL,
-          tileAnimations: OverworldTileAnimations,
+          tileAnimations: undefined,
           layers: {
             layers: {
               Background: { tilesets: ["Default"], hasHueTintShader: true },
@@ -46,44 +23,9 @@ export const phaserConfig = {
           },
         }),
       },
-      sprites: {
-        [Sprites.Settlement]: {
-          assetKey: Assets.MainAtlas,
-          frame: "sprites/resources/crystal.png",
-        },
-        [Sprites.Gold]: {
-          assetKey: Assets.MainAtlas,
-          frame: "sprites/resources/gold.png",
-        },
-        [Sprites.Container]: {
-          assetKey: Assets.MainAtlas,
-          frame: "sprites/resources/chest.png",
-        },
-        [Sprites.GoldShrine]: {
-          assetKey: Assets.MainAtlas,
-          frame: "sprites/resources/gold.png",
-        },
-        [Sprites.EscapePortal]: {
-          assetKey: Assets.MainAtlas,
-          frame: "sprites/resources/wood.png",
-        },
-        [Sprites.EmberCrown]: {
-          assetKey: Assets.MainAtlas,
-          frame: "sprites/resources/wood.png",
-        },
-        [Sprites.Donkey]: {
-          assetKey: Assets.MainAtlas,
-          frame: "sprites/workers/donkey.png",
-        },
-        [Sprites.Soldier]: {
-          assetKey: Assets.MainAtlas,
-          frame: "sprites/warriors/hero.png",
-        },
-      },
+      sprites: {},
       animations: [],
-      tilesets: {
-        Default: { assetKey: Assets.OverworldTileset, tileWidth: TILE_WIDTH, tileHeight: TILE_HEIGHT },
-      },
+      tilesets: {},
     }),
   },
   scale: defineScaleConfig({
