@@ -1,2 +1,2 @@
 export { defineLoadingStateComponent } from "./LoadingStateComponent";
-export { defineLastTransitionComponent } from "./LastTransitionComponent";
+export { defineTailTransitionComponent } from "./TailTransitionComponent";

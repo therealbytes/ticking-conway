@@ -2,7 +2,7 @@ import { tileCoordToPixelCoord } from "@latticexyz/phaserx";
 import { defineComponentSystem, getComponentValue, getComponentValueStrict, setComponent } from "@latticexyz/recs";
 import { arrayify } from "@ethersproject/bytes";
 import { NetworkLayer } from "../../network";
-import { Colors, BlockTime } from "../constants";
+import { Colors, FrameTime } from "../constants";
 import { PhaserLayer } from "../types";
 
 type CellRegistry = {
@@ -25,7 +25,7 @@ function unpackByte(b: number, n: number): number[] {
 export function createConwayStateSystem(network: NetworkLayer, phaser: PhaserLayer) {
   const {
     world,
-    components: { Position, Dimensions, CellBitSize, ConwayState, LastTransition },
+    components: { Position, Dimensions, CellBitSize, ConwayState, TailTransition },
   } = network;
 
   const cellRegistry: CellRegistry = {};
@@ -56,12 +56,12 @@ export function createConwayStateSystem(network: NetworkLayer, phaser: PhaserLay
     const { x: gridX, y: gridY } = getComponentValue(Position, entity) || { x: 0, y: 0 };
 
     const datenow = Date.now();
-    const lastTransition = getComponentValue(LastTransition, entity);
-    const lastTransitionTime = lastTransition ? lastTransition.timestamp : 0;
-    const nextTransitionTime = Math.max(datenow, lastTransitionTime + BlockTime);
-    const nextTransition: typeof lastTransition = { timestamp: nextTransitionTime };
-    const timeout = nextTransitionTime - datenow;
-    setComponent(LastTransition, entity, nextTransition);
+    const currTailTransition = getComponentValue(TailTransition, entity);
+    const currTailTransitionTime = currTailTransition ? currTailTransition.timestamp : 0;
+    const newTailTransitionTime = Math.max(datenow, currTailTransitionTime + FrameTime);
+    const newTailTransition: typeof currTailTransition = { timestamp: newTailTransitionTime };
+    const timeout = newTailTransitionTime - datenow;
+    setComponent(TailTransition, entity, newTailTransition);
 
     setTimeout(() => {
       const startTime = Date.now();
@@ -82,7 +82,8 @@ export function createConwayStateSystem(network: NetworkLayer, phaser: PhaserLay
           cellObj.setFillStyle(color);
         }
       }
-      console.log(`conway state update took ${Date.now() - startTime}ms`);
+      const endTime = Date.now();
+      console.log(`[${endTime}] conway state update took ${Date.now() - startTime}ms`);
     }, timeout);
   });
 }

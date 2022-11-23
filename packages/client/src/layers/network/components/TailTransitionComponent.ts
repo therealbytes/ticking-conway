@@ -1,15 +1,15 @@
 import { defineComponent, Type, World } from "@latticexyz/recs";
 
-export function defineLastTransitionComponent(world: World) {
+export function defineTailTransitionComponent(world: World) {
   return defineComponent(
     world,
     {
       timestamp: Type.Number,
     },
     {
-      id: "LastTransition",
+      id: "TailTransition",
       metadata: {
-        contractId: "component.LastTransition",
+        contractId: "component.TailTransition",
       },
     }
   );
