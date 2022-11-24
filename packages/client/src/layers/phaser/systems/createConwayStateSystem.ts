@@ -25,7 +25,7 @@ function unpackByte(b: number, n: number): number[] {
 export function createConwayStateSystem(network: NetworkLayer, phaser: PhaserLayer) {
   const {
     world,
-    components: { Position, Dimensions, CellBitSize, ConwayState, TailTransition },
+    components: { Position, Dimensions, CellBitSize, ConwayState, TailTransitionTime },
   } = network;
 
   const cellRegistry: CellRegistry = {};
@@ -56,12 +56,12 @@ export function createConwayStateSystem(network: NetworkLayer, phaser: PhaserLay
     const { x: gridX, y: gridY } = getComponentValue(Position, entity) || { x: 0, y: 0 };
 
     const datenow = Date.now();
-    const currTailTransition = getComponentValue(TailTransition, entity);
-    const currTailTransitionTime = currTailTransition ? currTailTransition.timestamp : 0;
+    const currTailTransition = getComponentValue(TailTransitionTime, entity);
+    const currTailTransitionTime = currTailTransition ? currTailTransition.value : 0;
     const newTailTransitionTime = Math.max(datenow, currTailTransitionTime + FrameTime);
-    const newTailTransition: typeof currTailTransition = { timestamp: newTailTransitionTime };
+    const newTailTransition: typeof currTailTransition = { value: newTailTransitionTime };
     const timeout = newTailTransitionTime - datenow;
-    setComponent(TailTransition, entity, newTailTransition);
+    setComponent(TailTransitionTime, entity, newTailTransition);
 
     setTimeout(() => {
       const startTime = Date.now();
