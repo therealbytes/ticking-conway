@@ -31,7 +31,7 @@ export async function createPhaserLayer(network: NetworkLayer) {
 
   // --- SYSTEMS --------------------------------------------------------------------
   createConwayStateSystem(network, context);
-  createNewCellsSystem(network, context);
+  // createNewCellsSystem(network, context);
   createInputSystem(network, context);
 
   return context;

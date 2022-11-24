@@ -1,18 +1,27 @@
-import { pixelCoordToTileCoord } from "@latticexyz/phaserx";
-import { getComponentValueStrict, getComponentEntities } from "@latticexyz/recs";
+import { pixelCoordToTileCoord, tileCoordToPixelCoord } from "@latticexyz/phaserx";
+import {
+  getComponentValueStrict,
+  getComponentEntities,
+  setComponent,
+  getComponentValue,
+  EntityIndex,
+} from "@latticexyz/recs";
 import { Coord } from "@latticexyz/utils";
 import { NetworkLayer } from "../../network";
 import { PhaserLayer } from "../types";
+import { Colors } from "../constants";
+import { createRectangleObjectRegistry } from "../../../utils/phaser";
 
 export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
   const {
     world,
-    components: { Dimensions, Position },
+    components: { Dimensions, Position, Painting },
   } = network;
 
   const {
     scenes: {
       Main: {
+        phaserScene,
         input,
         maps: {
           Main: { tileWidth, tileHeight },
@@ -20,6 +29,8 @@ export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
       },
     },
   } = phaser;
+
+  const cellRegistry = createRectangleObjectRegistry();
 
   const clickSub = input.click$.subscribe((p) => {
     const pointer = p as Phaser.Input.Pointer;
@@ -29,7 +40,7 @@ export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
       tileHeight
     );
 
-    let target: number | undefined;
+    let target: EntityIndex | undefined;
     let cellInPos: Coord | undefined;
 
     for (const entity of getComponentEntities(Dimensions)) {
@@ -42,11 +53,48 @@ export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
       }
     }
 
-    if (target && cellInPos) {
-      console.log("click on", target, cellInPos);
-      network.api.paint(world.entities[target], 1, [cellInPos]);
+    if (target === undefined || cellInPos === undefined) return;
+
+    let painting = getComponentValue(Painting, target);
+    if (!painting) {
+      painting = { value: [] };
+      setComponent(Painting, target, painting);
+    }
+
+    const posStr = `${cellInPos.x}:${cellInPos.y}`;
+    const cellId = `${target}.${posStr}`;
+
+    painting.value.push(posStr);
+
+    const color = Colors.Blue;
+    const alpha = 1;
+
+    let cellObj = cellRegistry.get(target, cellId);
+    if (!cellObj) {
+      const { x, y } = tileCoordToPixelCoord(cellPos, tileWidth, tileHeight);
+      cellObj = phaserScene.add.rectangle(x, y, tileWidth, tileHeight, color);
+      cellObj.setDepth(1);
+      cellRegistry.add(target, cellId, cellObj);
+    }
+    cellObj.setAlpha(alpha);
+  });
+
+  const enterSub = input.keyboard$.subscribe((p) => {
+    const key = p as Phaser.Input.Keyboard.Key;
+    if (key.keyCode === 13 && key.isDown) {
+      const target = 0 as EntityIndex;
+      const painting = getComponentValue(Painting, target)?.value;
+      setComponent(Painting, target, { value: [] });
+      if (!painting) return;
+      const cleanPainting = Array.from(new Set(painting));
+      const paintingCoords = cleanPainting.map((coord) => coord.split(":").map((c) => parseInt(c)));
+      for (const cellId in cellRegistry.entities[target]) {
+        cellRegistry.get(target, cellId)?.setAlpha(0);
+      }
+      network.api.paint(world.entities[target], 1, paintingCoords);
     }
   });
 
   world.registerDisposer(() => clickSub?.unsubscribe());
+  world.registerDisposer(() => enterSub?.unsubscribe());
 }

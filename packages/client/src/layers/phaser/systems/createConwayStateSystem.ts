@@ -52,11 +52,11 @@ export function createConwayStateSystem(network: NetworkLayer, phaser: PhaserLay
           const cell = unpacked[jj];
           const cellIdx = ii * unpacked.length + jj;
           const [inX, inY] = [cellIdx % width, Math.floor(cellIdx / width)];
-          const { x, y } = tileCoordToPixelCoord({ x: gridX + inX, y: gridY + inY }, tileWidth, tileHeight);
-          const cellId = `${entity}.${inX}-${inY}`;
+          const cellId = `${entity}.${inX}:${inY}`;
           const color = cell == 1 ? Colors.Black : Colors.White;
           let cellObj = cellRegistry.get(entity, cellId);
           if (!cellObj) {
+            const { x, y } = tileCoordToPixelCoord({ x: gridX + inX, y: gridY + inY }, tileWidth, tileHeight);
             cellObj = phaserScene.add.rectangle(x, y, tileWidth, tileHeight, color, 1);
             cellRegistry.add(entity, cellId, cellObj);
           }

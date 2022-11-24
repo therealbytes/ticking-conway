@@ -7,9 +7,8 @@ import {
   defineStringComponent,
   setupMUDNetwork,
 } from "@latticexyz/std-client";
-import { Coord } from "@latticexyz/utils";
 
-import { defineLoadingStateComponent } from "./components";
+import { defineLoadingStateComponent, definePaintingComponent } from "./components";
 import { SystemTypes } from "contracts/types/SystemTypes";
 import { SystemAbis } from "contracts/types/SystemAbis.mjs";
 import { GameConfig, getNetworkConfig } from "./config";
@@ -28,6 +27,7 @@ export async function createNetworkLayer(config: GameConfig) {
   const components = {
     // LOCAL COMPONENTS
     LoadingState: defineLoadingStateComponent(world),
+    Painting: definePaintingComponent(world),
     TailTransitionTime: defineNumberComponent(world, {
       id: "TailTransitionTime",
       metadata: { contractId: "component.TailTransitionTime" },
@@ -48,10 +48,6 @@ export async function createNetworkLayer(config: GameConfig) {
     ConwayState: defineStringComponent(world, {
       id: "ConwayState",
       metadata: { contractId: "conway.component.conwayState" },
-    }),
-    NewCells: defineStringComponent(world, {
-      id: "NewCells",
-      metadata: { contractId: "conway.component.newCells" },
     }),
   };
 

@@ -43,12 +43,12 @@ export function createNewCellsSystem(network: NetworkLayer, phaser: PhaserLayer)
         const cell = unpacked[jj];
         const cellIdx = ii * unpacked.length + jj;
         const [inX, inY] = [cellIdx % width, Math.floor(cellIdx / width)];
-        const { x, y } = tileCoordToPixelCoord({ x: gridX + inX, y: gridY + inY }, tileWidth, tileHeight);
-        const cellId = `${entity}.${inX}-${inY}`;
+        const cellId = `${entity}.${inX}:${inY}`;
         const color = Colors.Blue;
         const alpha = cell == 1 ? 0.5 : 0.0;
         let cellObj = cellRegistry.get(entity, cellId);
         if (!cellObj) {
+          const { x, y } = tileCoordToPixelCoord({ x: gridX + inX, y: gridY + inY }, tileWidth, tileHeight);
           cellObj = phaserScene.add.rectangle(x, y, tileWidth, tileHeight, color);
           cellObj.setDepth(1);
           cellRegistry.add(entity, cellId, cellObj);
