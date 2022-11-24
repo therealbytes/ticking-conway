@@ -37,8 +37,8 @@ contract PaintSystem is System {
       uint256 byteOffset = offset / 8;
       uint256 bitOffset = offset % 8;
       bytes1 b = state[byteOffset];
-      bytes1 mask = (bytes1(uint8(2**bitOffset - 1)) << (8 - bitOffset)) | bytes1(uint8(2**cellBitSize - 1));
-      bytes1 nb = (b & mask) | (v << (8 - bitOffset - cellBitSize));
+      bytes1 mask = bytes1(uint8(2**cellBitSize - 1)) << (8 - bitOffset - cellBitSize);
+      bytes1 nb = (b & ~mask) | (v << (8 - bitOffset - cellBitSize));
       state[byteOffset] = nb;
     }
     newCellsComponent.setValue(entity, state);
