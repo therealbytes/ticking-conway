@@ -7,6 +7,8 @@ import {
   defineStringComponent,
   setupMUDNetwork,
 } from "@latticexyz/std-client";
+import { Coord } from "@latticexyz/utils";
+
 import { defineLoadingStateComponent } from "./components";
 import { SystemTypes } from "contracts/types/SystemTypes";
 import { SystemAbis } from "contracts/types/SystemAbis.mjs";
@@ -24,11 +26,13 @@ export async function createNetworkLayer(config: GameConfig) {
 
   // --- COMPONENTS -----------------------------------------------------------------
   const components = {
+    // LOCAL COMPONENTS
     LoadingState: defineLoadingStateComponent(world),
     TailTransitionTime: defineNumberComponent(world, {
       id: "TailTransitionTime",
       metadata: { contractId: "component.TailTransitionTime" },
     }),
+    // ON-CHAIN COMPONENTS
     Position: defineCoordComponent(world, {
       id: "Position",
       metadata: { contractId: "conway.component.position" },
@@ -45,6 +49,10 @@ export async function createNetworkLayer(config: GameConfig) {
       id: "ConwayState",
       metadata: { contractId: "conway.component.conwayState" },
     }),
+    NewCells: defineStringComponent(world, {
+      id: "NewCells",
+      metadata: { contractId: "conway.component.newCells" },
+    }),
   };
 
   // --- SETUP ----------------------------------------------------------------------
@@ -57,6 +65,9 @@ export async function createNetworkLayer(config: GameConfig) {
   const actions = createActionSystem(world, txReduced$);
 
   // --- API ------------------------------------------------------------------------
+  function paint(entity: number, value: number, coords: Coord[]) {
+    systems["conway.system.paint"].executeTyped(entity, value, coords);
+  }
 
   // --- CONTEXT --------------------------------------------------------------------
   const context = {
@@ -68,7 +79,7 @@ export async function createNetworkLayer(config: GameConfig) {
     startSync,
     network,
     actions,
-    api: {},
+    api: { paint },
     dev: setupDevSystems(world, encoders as Promise<any>, systems),
   };
 

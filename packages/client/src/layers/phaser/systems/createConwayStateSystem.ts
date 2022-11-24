@@ -53,7 +53,7 @@ export function createConwayStateSystem(network: NetworkLayer, phaser: PhaserLay
 
     const cellBitSize = getComponentValueStrict(CellBitSize, entity).value;
     const { x: width, y: height } = getComponentValueStrict(Dimensions, entity);
-    const { x: gridX, y: gridY } = getComponentValue(Position, entity) || { x: 0, y: 0 };
+    const { x: gridX, y: gridY } = getComponentValueStrict(Position, entity) || { x: 0, y: 0 };
 
     const datenow = Date.now();
     const currTailTransition = getComponentValue(TailTransitionTime, entity);
