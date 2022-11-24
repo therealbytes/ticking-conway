@@ -25,7 +25,10 @@ export async function createNetworkLayer(config: GameConfig) {
   // --- COMPONENTS -----------------------------------------------------------------
   const components = {
     LoadingState: defineLoadingStateComponent(world),
-    TailTransitionTime: defineNumberComponent(world),
+    TailTransitionTime: defineNumberComponent(world, {
+      id: "TailTransitionTime",
+      metadata: { contractId: "component.TailTransitionTime" },
+    }),
     Position: defineCoordComponent(world, {
       id: "Position",
       metadata: { contractId: "conway.component.position" },
