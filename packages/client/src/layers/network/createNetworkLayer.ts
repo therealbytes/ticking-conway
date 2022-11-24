@@ -1,4 +1,4 @@
-import { createWorld } from "@latticexyz/recs";
+import { createWorld, EntityID } from "@latticexyz/recs";
 import { setupDevSystems } from "./setup";
 import {
   createActionSystem,
@@ -65,7 +65,7 @@ export async function createNetworkLayer(config: GameConfig) {
   const actions = createActionSystem(world, txReduced$);
 
   // --- API ------------------------------------------------------------------------
-  function paint(entity: number, value: number, coords: Coord[]) {
+  function paint(entity: EntityID, value: number, coords: Coord[]) {
     systems["conway.system.paint"].executeTyped(entity, value, coords);
   }
 

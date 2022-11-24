@@ -25,7 +25,8 @@
         "CellBitSizeComponent",
         "DimensionsComponent",
         "PositionComponent",
-        "ConwayStateComponent"
+        "ConwayStateComponent",
+        "NewCellsComponent"
       ],
       "initialize": "new bytes(0)"
     },

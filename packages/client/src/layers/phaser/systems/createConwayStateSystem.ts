@@ -4,31 +4,14 @@ import { arrayify } from "@ethersproject/bytes";
 import { NetworkLayer } from "../../network";
 import { Colors, FrameTime } from "../constants";
 import { PhaserLayer } from "../types";
-
-type CellRegistry = {
-  [key: string]: {
-    [key: string]: Phaser.GameObjects.Rectangle;
-  };
-};
-
-function unpackByte(b: number, n: number): number[] {
-  if (n < 0 || n > 8 || 8 % n !== 0) {
-    throw new Error("invalid pack size");
-  }
-  const out = new Array(8 / n);
-  for (let ii = 0; ii < out.length; ii++) {
-    out[ii] = (b >> (8 - n * (ii + 1))) & ((1 << n) - 1);
-  }
-  return out;
-}
+import { unpackByte } from "../../../utils/bytes";
+import { createRectangleObjectRegistry } from "../../../utils/phaser";
 
 export function createConwayStateSystem(network: NetworkLayer, phaser: PhaserLayer) {
   const {
     world,
     components: { Position, Dimensions, CellBitSize, ConwayState, TailTransitionTime },
   } = network;
-
-  const cellRegistry: CellRegistry = {};
 
   const {
     scenes: {
@@ -41,14 +24,11 @@ export function createConwayStateSystem(network: NetworkLayer, phaser: PhaserLay
     },
   } = phaser;
 
-  defineComponentSystem(world, ConwayState, ({ entity, value }) => {
-    let entityCellRegistry = cellRegistry[entity];
-    if (!entityCellRegistry) {
-      entityCellRegistry = cellRegistry[entity] = {};
-    }
+  const cellRegistry = createRectangleObjectRegistry();
 
+  defineComponentSystem(world, ConwayState, ({ entity, value }) => {
     const conwayState = value[0];
-    if (!conwayState) return console.warn("no position");
+    if (!conwayState) return console.warn("no conway state");
     const stateBytes = arrayify(conwayState.value);
 
     const cellBitSize = getComponentValueStrict(CellBitSize, entity).value;
@@ -75,9 +55,10 @@ export function createConwayStateSystem(network: NetworkLayer, phaser: PhaserLay
           const { x, y } = tileCoordToPixelCoord({ x: gridX + inX, y: gridY + inY }, tileWidth, tileHeight);
           const cellId = `${entity}.${inX}-${inY}`;
           const color = cell == 1 ? Colors.Black : Colors.White;
-          let cellObj = entityCellRegistry[cellId];
+          let cellObj = cellRegistry.get(entity, cellId);
           if (!cellObj) {
-            cellObj = entityCellRegistry[cellId] = phaserScene.add.rectangle(x, y, tileWidth, tileHeight, color, 1);
+            cellObj = phaserScene.add.rectangle(x, y, tileWidth, tileHeight, color, 1);
+            cellRegistry.add(entity, cellId, cellObj);
           }
           cellObj.setFillStyle(color);
         }

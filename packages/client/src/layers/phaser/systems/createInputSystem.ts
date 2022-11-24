@@ -44,7 +44,7 @@ export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
 
     if (target && cellInPos) {
       console.log("click on", target, cellInPos);
-      network.api.paint(target, 1, [cellInPos]);
+      network.api.paint(world.entities[target], 1, [cellInPos]);
     }
   });
 

@@ -10,6 +10,7 @@ import { PositionComponent, ID as PositionComponentID } from "../components/Posi
 import { DimensionsComponent, ID as DimensionsComponentID } from "../components/DimensionsComponent.sol";
 import { CellBitSizeComponent, ID as CellBitSizeComponentID } from "../components/CellBitSizeComponent.sol";
 import { ConwayStateComponent, ID as ConwayStateComponentID } from "../components/ConwayStateComponent.sol";
+import { NewCellsComponent, ID as NewCellsComponentID } from "../components/NewCellsComponent.sol";
 
 uint256 constant ID = uint256(keccak256("conway.system.init"));
 
@@ -28,6 +29,7 @@ contract InitSystem is System {
     ConwayStateComponent conwayStateComponent = ConwayStateComponent(
       getAddressById(components, ConwayStateComponentID)
     );
+    NewCellsComponent newCellsComponent = NewCellsComponent(getAddressById(components, NewCellsComponentID));
     // Set values
     positionComponent.set(entity, Coord(GridPosX, GridPosY));
     dimensionsComponent.set(entity, Coord(GridDimX, GridDimY));
@@ -39,12 +41,13 @@ contract InitSystem is System {
     }
     bytes memory state = new bytes(stateSize);
     bytes32 rnd = blockhash(block.number);
-    for (uint256 ii = 0; ii < state.length; ii++) {
+    for (uint256 ii = 0; ii < stateSize; ii++) {
       if (ii % 32 == 0) {
         rnd = bytes32(uint256(keccak256(abi.encodePacked(rnd))));
       }
       state[ii] = rnd[ii % 32];
     }
     conwayStateComponent.setValue(entity, state);
+    newCellsComponent.setValue(entity, new bytes(stateSize));
   }
 }
