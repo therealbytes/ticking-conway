@@ -49,6 +49,10 @@ export async function createNetworkLayer(config: GameConfig) {
       id: "ConwayState",
       metadata: { contractId: "conway.component.conwayState" },
     }),
+    Canvas: defineStringComponent(world, {
+      id: "Canvas",
+      metadata: { contractId: "conway.component.canvas" },
+    }),
   };
 
   // --- SETUP ----------------------------------------------------------------------

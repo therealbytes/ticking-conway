@@ -3,7 +3,7 @@ import { createPhaserEngine } from "@latticexyz/phaserx";
 import { phaserConfig } from "./config";
 import { Colors } from "./constants";
 import { NetworkLayer } from "../network";
-import { createConwayStateSystem, createNewCellsSystem, createInputSystem } from "./systems";
+import { createConwayStateSystem, createCanvasSystem, createInputSystem } from "./systems";
 
 /**
  * The Phaser layer is responsible for rendering game objects to the screen.
@@ -31,7 +31,7 @@ export async function createPhaserLayer(network: NetworkLayer) {
 
   // --- SYSTEMS --------------------------------------------------------------------
   createConwayStateSystem(network, context);
-  // createNewCellsSystem(network, context);
+  createCanvasSystem(network, context);
   createInputSystem(network, context);
 
   return context;

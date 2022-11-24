@@ -7,10 +7,10 @@ import { PhaserLayer } from "../types";
 import { unpackByte } from "../../../utils/bytes";
 import { createRectangleObjectRegistry } from "../../../utils/phaser";
 
-export function createNewCellsSystem(network: NetworkLayer, phaser: PhaserLayer) {
+export function createCanvasSystem(network: NetworkLayer, phaser: PhaserLayer) {
   const {
     world,
-    components: { Position, Dimensions, CellBitSize, NewCells },
+    components: { Position, Dimensions, CellBitSize, Canvas },
   } = network;
 
   const {
@@ -26,9 +26,9 @@ export function createNewCellsSystem(network: NetworkLayer, phaser: PhaserLayer)
 
   const cellRegistry = createRectangleObjectRegistry();
 
-  defineComponentSystem(world, NewCells, ({ entity, value }) => {
+  defineComponentSystem(world, Canvas, ({ entity, value }) => {
     const conwayState = value[0];
-    if (!conwayState) return console.warn("no new cells state");
+    if (!conwayState) return console.warn("no canvas");
     const stateBytes = arrayify(conwayState.value);
 
     const cellBitSize = getComponentValueStrict(CellBitSize, entity).value;
@@ -57,6 +57,6 @@ export function createNewCellsSystem(network: NetworkLayer, phaser: PhaserLayer)
       }
     }
     const endTime = Date.now();
-    console.log(`[${endTime}] new cells state update took ${Date.now() - startTime}ms`);
+    console.log(`[${endTime}] canvas update took ${Date.now() - startTime}ms`);
   });
 }

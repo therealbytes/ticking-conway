@@ -1,3 +1,3 @@
 export { createConwayStateSystem } from "./createConwayStateSystem";
-export { createNewCellsSystem } from "./createNewCellsSystem";
+export { createCanvasSystem } from "./createCanvasSystem";
 export { createInputSystem } from "./createInputSystem";
