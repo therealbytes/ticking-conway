@@ -16,7 +16,8 @@
     {
       "name": "TickSystem",
       "writeAccess": [
-        "ConwayStateComponent"
+        "ConwayStateComponent",
+        "NewCellsComponent"
       ]
     },
     {
