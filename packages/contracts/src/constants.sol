@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity >=0.8.0;
 
-uint256 constant GridId = uint256(keccak256("conway.entity.grid"));
+// uint256 constant GridId = uint256(keccak256("conway.entity.grid"));
+uint256 constant GridId = 0x060D;
 int32 constant GridPosX = 10;
 int32 constant GridPosY = 10;
 int32 constant GridDimX = 32;
