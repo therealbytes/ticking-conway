@@ -3,7 +3,8 @@
     "CellBitSizeComponent",
     "ConwayStateComponent",
     "DimensionsComponent",
-    "PositionComponent"
+    "PositionComponent",
+    "NewCellsComponent"
   ],
   "systems": [
     {
@@ -23,9 +24,16 @@
       "writeAccess": [
         "CellBitSizeComponent",
         "DimensionsComponent",
+        "PositionComponent",
         "ConwayStateComponent"
       ],
       "initialize": "new bytes(0)"
+    },
+    {
+      "name": "PaintSystem",
+      "writeAccess": [
+        "NewCellsComponent"
+      ]
     }
   ]
 }

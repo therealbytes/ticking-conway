@@ -9,9 +9,9 @@ import { DimensionsComponent, ID as DimensionsComponentID } from "../components/
 import { CellBitSizeComponent, ID as CellBitSizeComponentID } from "../components/CellBitSizeComponent.sol";
 import { NewCellsComponent, ID as NewCellsComponentID } from "../components/NewCellsComponent.sol";
 
-uint256 constant ID = uint256(keccak256("conway.system.init"));
+uint256 constant ID = uint256(keccak256("conway.system.paint"));
 
-contract InitSystem is System {
+contract PaintSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {

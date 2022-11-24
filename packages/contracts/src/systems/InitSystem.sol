@@ -5,7 +5,8 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
 import { Coord } from "../types.sol";
-import { GridId, GridDimX, GridDimY, GridCellBitSize } from "../constants.sol";
+import { GridPosX, GridPosY, GridId, GridDimX, GridDimY, GridCellBitSize } from "../constants.sol";
+import { PositionComponent, ID as PositionComponentID } from "../components/PositionComponent.sol";
 import { DimensionsComponent, ID as DimensionsComponentID } from "../components/DimensionsComponent.sol";
 import { CellBitSizeComponent, ID as CellBitSizeComponentID } from "../components/CellBitSizeComponent.sol";
 import { ConwayStateComponent, ID as ConwayStateComponentID } from "../components/ConwayStateComponent.sol";
@@ -19,6 +20,7 @@ contract InitSystem is System {
     uint256 entity = GridId;
     // Check constants
     // Get components
+    PositionComponent positionComponent = PositionComponent(getAddressById(components, PositionComponentID));
     DimensionsComponent dimensionsComponent = DimensionsComponent(getAddressById(components, DimensionsComponentID));
     CellBitSizeComponent cellBitSizeComponent = CellBitSizeComponent(
       getAddressById(components, CellBitSizeComponentID)
@@ -27,6 +29,7 @@ contract InitSystem is System {
       getAddressById(components, ConwayStateComponentID)
     );
     // Set values
+    positionComponent.set(entity, Coord(GridPosX, GridPosY));
     dimensionsComponent.set(entity, Coord(GridDimX, GridDimY));
     cellBitSizeComponent.set(entity, GridCellBitSize);
     uint256 nCells = uint256(int256(GridDimX)) * uint256(int256(GridDimY));
