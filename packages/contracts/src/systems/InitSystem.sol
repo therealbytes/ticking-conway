@@ -5,12 +5,11 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
 import { Coord } from "../types.sol";
-import { GridPosX, GridPosY, GridId, GridDimX, GridDimY, GridCellBitSize } from "../constants.sol";
+import { GridId, GridPosX, GridPosY, GridDimX, GridDimY, GridCellBitSize } from "../constants.sol";
 import { PositionComponent, ID as PositionComponentID } from "../components/PositionComponent.sol";
 import { DimensionsComponent, ID as DimensionsComponentID } from "../components/DimensionsComponent.sol";
 import { CellBitSizeComponent, ID as CellBitSizeComponentID } from "../components/CellBitSizeComponent.sol";
 import { ConwayStateComponent, ID as ConwayStateComponentID } from "../components/ConwayStateComponent.sol";
-import { NewCellsComponent, ID as NewCellsComponentID } from "../components/NewCellsComponent.sol";
 
 uint256 constant ID = uint256(keccak256("conway.system.init"));
 
@@ -29,11 +28,11 @@ contract InitSystem is System {
     ConwayStateComponent conwayStateComponent = ConwayStateComponent(
       getAddressById(components, ConwayStateComponentID)
     );
-    NewCellsComponent newCellsComponent = NewCellsComponent(getAddressById(components, NewCellsComponentID));
     // Set values
     positionComponent.set(entity, Coord(GridPosX, GridPosY));
     dimensionsComponent.set(entity, Coord(GridDimX, GridDimY));
     cellBitSizeComponent.set(entity, GridCellBitSize);
+    // Randomize initial grid state from block hash
     uint256 nCells = uint256(int256(GridDimX)) * uint256(int256(GridDimY));
     uint256 stateSize = (nCells * GridCellBitSize) / 8;
     if ((8 * stateSize) / GridCellBitSize < nCells) {
@@ -48,6 +47,5 @@ contract InitSystem is System {
       state[ii] = rnd[ii % 32];
     }
     conwayStateComponent.setValue(entity, state);
-    newCellsComponent.setValue(entity, new bytes(stateSize));
   }
 }

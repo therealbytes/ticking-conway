@@ -7,7 +7,7 @@ import { getAddressById } from "solecs/utils.sol";
 import { Coord } from "../types.sol";
 import { DimensionsComponent, ID as DimensionsComponentID } from "../components/DimensionsComponent.sol";
 import { CellBitSizeComponent, ID as CellBitSizeComponentID } from "../components/CellBitSizeComponent.sol";
-import { NewCellsComponent, ID as NewCellsComponentID } from "../components/NewCellsComponent.sol";
+import { ConwayStateComponent, ID as ConwayStateComponentID } from "../components/ConwayStateComponent.sol";
 
 uint256 constant ID = uint256(keccak256("conway.system.paint"));
 
@@ -21,11 +21,13 @@ contract PaintSystem is System {
     CellBitSizeComponent cellBitSizeComponent = CellBitSizeComponent(
       getAddressById(components, CellBitSizeComponentID)
     );
-    NewCellsComponent newCellsComponent = NewCellsComponent(getAddressById(components, NewCellsComponentID));
+    ConwayStateComponent conwayStateComponent = ConwayStateComponent(
+      getAddressById(components, ConwayStateComponentID)
+    );
 
     Coord memory dimensions = dimensionsComponent.getValue(entity);
     uint256 cellBitSize = cellBitSizeComponent.getValue(entity);
-    bytes memory state = newCellsComponent.getValue(entity);
+    bytes memory state = conwayStateComponent.getValue(entity);
 
     require(value < 2**cellBitSize, "PaintSystem: Value too large for cell bit size");
 
@@ -41,7 +43,7 @@ contract PaintSystem is System {
       bytes1 nb = (b & ~mask) | (v << (8 - bitOffset - cellBitSize));
       state[byteOffset] = nb;
     }
-    newCellsComponent.setValue(entity, state);
+    conwayStateComponent.setValue(entity, state);
   }
 
   function executeTyped(
