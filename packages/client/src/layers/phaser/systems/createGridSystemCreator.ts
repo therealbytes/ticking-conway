@@ -48,7 +48,7 @@ export function createGridSystemCreator(
 
       const cellBitSize = getComponentValueStrict(CellBitSize, entity).value;
       const { x: width, y: height } = getComponentValueStrict(Dimensions, entity);
-      const { x: gridX, y: gridY } = getComponentValueStrict(Position, entity) || { x: 0, y: 0 };
+      const { x: gridX, y: gridY } = getComponentValueStrict(Position, entity);
 
       const update = () => {
         const startTime = Date.now();
