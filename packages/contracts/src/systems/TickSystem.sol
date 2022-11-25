@@ -73,7 +73,7 @@ contract TickSystem is System {
         conwayComponent.setValue(entity, state);
         break;
       } else {
-        conwayComponent.setGhost(entity, state);
+        conwayComponent.setGhostValue(entity, state);
         ii++;
       }
     }
