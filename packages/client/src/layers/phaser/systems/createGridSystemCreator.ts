@@ -1,8 +1,9 @@
 import { tileCoordToPixelCoord } from "@latticexyz/phaserx";
 import { defineComponentSystem, getComponentValueStrict, Component, Type } from "@latticexyz/recs";
 import { arrayify } from "@ethersproject/bytes";
-import { NetworkLayer } from "../../network";
+import { encodeCell } from "./utils";
 import { PhaserLayer } from "../types";
+import { NetworkLayer } from "../../network";
 import { unpackByte } from "../../../utils/bytes";
 import { createRectangleObjectRegistry } from "../../../utils/phaser";
 
@@ -58,7 +59,7 @@ export function createGridSystemCreator(
             const cell = unpacked[jj];
             const cellIdx = ii * unpacked.length + jj;
             const [inX, inY] = [cellIdx % width, Math.floor(cellIdx / width)];
-            const cellId = `${entity}.${inX}:${inY}`;
+            const cellId = encodeCell(entity, { x: inX, y: inY });
             let cellObj = cellRegistry.get(entity, cellId);
             if (!cellObj) {
               const { x, y } = tileCoordToPixelCoord({ x: gridX + inX, y: gridY + inY }, tileWidth, tileHeight);

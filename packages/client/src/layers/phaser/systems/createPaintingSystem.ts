@@ -1,9 +1,10 @@
 import { defineComponentSystem, getComponentValueStrict } from "@latticexyz/recs";
 import { tileCoordToPixelCoord } from "@latticexyz/phaserx";
-import { createRectangleObjectRegistry } from "../../../utils/phaser";
-import { NetworkLayer } from "../../network";
+import { decodePosition, encodeCell } from "./utils";
 import { PhaserLayer } from "../types";
 import { Colors } from "../constants";
+import { NetworkLayer } from "../../network";
+import { createRectangleObjectRegistry } from "../../../utils/phaser";
 
 export function createPaintingSystem(network: NetworkLayer, phaser: PhaserLayer) {
   const {
@@ -36,8 +37,8 @@ export function createPaintingSystem(network: NetworkLayer, phaser: PhaserLayer)
         }
       } else {
         const lastCell = state[state.length - 1];
-        const [inX, inY] = lastCell.split(":").map((x) => parseInt(x));
-        const cellId = `${entity}.${inX}:${inY}`;
+        const { x: inX, y: inY } = decodePosition(lastCell);
+        const cellId = encodeCell(entity, { x: inX, y: inY });
         let cellObj = cellRegistry.get(entity, cellId);
         if (!cellObj) {
           const color = Colors.Blue;

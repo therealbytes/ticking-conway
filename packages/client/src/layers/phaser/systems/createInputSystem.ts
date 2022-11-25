@@ -7,8 +7,9 @@ import {
   EntityIndex,
 } from "@latticexyz/recs";
 import { Coord } from "@latticexyz/utils";
-import { NetworkLayer } from "../../network";
+import { decodePosition, encodePosition } from "./utils";
 import { PhaserLayer } from "../types";
+import { NetworkLayer } from "../../network";
 
 export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
   const {
@@ -51,7 +52,7 @@ export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
     if (target === undefined || cellInPos === undefined) return;
     if (target != (0 as EntityIndex)) return;
 
-    const posStr = `${cellInPos.x}:${cellInPos.y}`;
+    const posStr = encodePosition(cellInPos);
 
     const painting = getComponentValue(Painting, target) || { value: [] };
     if (painting.value.includes(posStr)) return;
@@ -72,7 +73,7 @@ export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
     const target = 0 as EntityIndex;
     const painting = popPainting(target);
     if (!painting) return;
-    const paintingCoords = painting.map((coord) => coord.split(":").map((c) => parseInt(c)));
+    const paintingCoords = painting.map((coord) => decodePosition(coord));
     network.api.paint(world.entities[target], 1, paintingCoords);
   });
 
