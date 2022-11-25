@@ -3,7 +3,8 @@
     "CellBitSizeComponent",
     "ConwayStateComponent",
     "DimensionsComponent",
-    "PositionComponent"
+    "PositionComponent",
+    "CanvasComponent"
   ],
   "systems": [
     {
@@ -13,25 +14,27 @@
       ]
     },
     {
-      "name": "TickSystem",
-      "writeAccess": [
-        "ConwayStateComponent"
-      ]
-    },
-    {
       "name": "InitSystem",
       "writeAccess": [
         "CellBitSizeComponent",
         "DimensionsComponent",
         "PositionComponent",
-        "ConwayStateComponent"
+        "ConwayStateComponent",
+        "CanvasComponent"
       ],
       "initialize": "new bytes(0)"
     },
     {
+      "name": "TickSystem",
+      "writeAccess": [
+        "ConwayStateComponent",
+        "CanvasComponent"
+      ]
+    },
+    {
       "name": "PaintSystem",
       "writeAccess": [
-        "ConwayStateComponent"
+        "CanvasComponent"
       ]
     }
   ]

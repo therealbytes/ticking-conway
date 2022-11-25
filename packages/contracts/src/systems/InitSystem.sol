@@ -9,6 +9,7 @@ import { GridId, GridPosX, GridPosY, GridDimX, GridDimY, GridCellBitSize } from 
 import { PositionComponent, ID as PositionComponentID } from "../components/PositionComponent.sol";
 import { DimensionsComponent, ID as DimensionsComponentID } from "../components/DimensionsComponent.sol";
 import { CellBitSizeComponent, ID as CellBitSizeComponentID } from "../components/CellBitSizeComponent.sol";
+import { CanvasComponent, ID as CanvasComponentID } from "../components/CanvasComponent.sol";
 import { ConwayStateComponent, ID as ConwayStateComponentID } from "../components/ConwayStateComponent.sol";
 
 uint256 constant ID = uint256(keccak256("conway.system.init"));
@@ -28,6 +29,7 @@ contract InitSystem is System {
     ConwayStateComponent conwayStateComponent = ConwayStateComponent(
       getAddressById(components, ConwayStateComponentID)
     );
+    CanvasComponent canvasComponent = CanvasComponent(getAddressById(components, CanvasComponentID));
     // Set values
     positionComponent.set(entity, Coord(GridPosX, GridPosY));
     dimensionsComponent.set(entity, Coord(GridDimX, GridDimY));
@@ -39,6 +41,7 @@ contract InitSystem is System {
       stateSize += 1;
     }
     bytes memory state = new bytes(stateSize);
+    canvasComponent.setValue(entity, state);
     bytes32 rnd = blockhash(block.number);
     for (uint256 ii = 0; ii < stateSize; ii++) {
       if (ii % 32 == 0) {

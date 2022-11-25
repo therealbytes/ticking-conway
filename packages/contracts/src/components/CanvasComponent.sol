@@ -2,8 +2,8 @@
 pragma solidity >=0.8.0;
 import "./BytesBareComponent.sol";
 
-uint256 constant ID = uint256(keccak256("conway.component.newCells"));
+uint256 constant ID = uint256(keccak256("conway.component.canvas"));
 
-contract NewCellsComponent is BytesBareComponent {
+contract CanvasComponent is BytesBareComponent {
   constructor(address world) BytesBareComponent(world, ID) {}
 }
