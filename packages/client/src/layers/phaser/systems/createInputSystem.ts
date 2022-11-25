@@ -54,6 +54,7 @@ export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
     }
 
     if (target === undefined || cellInPos === undefined) return;
+    if (target != (0 as EntityIndex)) return;
 
     let painting = getComponentValue(Painting, target);
     if (!painting) {
