@@ -1,4 +1,4 @@
-import { pixelCoordToTileCoord, tileCoordToPixelCoord } from "@latticexyz/phaserx";
+import { pixelCoordToTileCoord } from "@latticexyz/phaserx";
 import {
   getComponentValueStrict,
   getComponentEntities,
@@ -9,8 +9,6 @@ import {
 import { Coord } from "@latticexyz/utils";
 import { NetworkLayer } from "../../network";
 import { PhaserLayer } from "../types";
-import { Colors } from "../constants";
-import { createRectangleObjectRegistry } from "../../../utils/phaser";
 
 export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
   const {
@@ -21,7 +19,6 @@ export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
   const {
     scenes: {
       Main: {
-        phaserScene,
         input,
         maps: {
           Main: { tileWidth, tileHeight },
@@ -29,8 +26,6 @@ export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
       },
     },
   } = phaser;
-
-  const cellRegistry = createRectangleObjectRegistry();
 
   const clickSub = input.click$.subscribe((p) => {
     const pointer = p as Phaser.Input.Pointer;
@@ -56,46 +51,39 @@ export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
     if (target === undefined || cellInPos === undefined) return;
     if (target != (0 as EntityIndex)) return;
 
-    let painting = getComponentValue(Painting, target);
-    if (!painting) {
-      painting = { value: [] };
-      setComponent(Painting, target, painting);
-    }
-
     const posStr = `${cellInPos.x}:${cellInPos.y}`;
-    const cellId = `${target}.${posStr}`;
 
+    const painting = getComponentValue(Painting, target) || { value: [] };
+    if (painting.value.includes(posStr)) return;
     painting.value.push(posStr);
-
-    const color = Colors.Blue;
-    const alpha = 1;
-
-    let cellObj = cellRegistry.get(target, cellId);
-    if (!cellObj) {
-      const { x, y } = tileCoordToPixelCoord(cellPos, tileWidth, tileHeight);
-      cellObj = phaserScene.add.rectangle(x, y, tileWidth, tileHeight, color);
-      cellObj.setDepth(1);
-      cellRegistry.add(target, cellId, cellObj);
-    }
-    cellObj.setAlpha(alpha);
+    setComponent(Painting, target, painting);
   });
+
+  function popPainting(target: EntityIndex) {
+    const painting = getComponentValue(Painting, target)?.value;
+    if (!painting || painting.length == 0) return;
+    setComponent(Painting, target, { value: [] });
+    return painting;
+  }
 
   const enterSub = input.keyboard$.subscribe((p) => {
     const key = p as Phaser.Input.Keyboard.Key;
-    if (key.keyCode === 13 && key.isDown) {
-      const target = 0 as EntityIndex;
-      const painting = getComponentValue(Painting, target)?.value;
-      if (!painting || painting.length == 0) return;
-      setComponent(Painting, target, { value: [] });
-      const cleanPainting = Array.from(new Set(painting));
-      const paintingCoords = cleanPainting.map((coord) => coord.split(":").map((c) => parseInt(c)));
-      for (const cellId in cellRegistry.entities[target]) {
-        cellRegistry.get(target, cellId)?.setAlpha(0);
-      }
-      network.api.paint(world.entities[target], 1, paintingCoords);
-    }
+    if (key.keyCode !== 13 || !key.isDown) return;
+    const target = 0 as EntityIndex;
+    const painting = popPainting(target);
+    if (!painting) return;
+    const paintingCoords = painting.map((coord) => coord.split(":").map((c) => parseInt(c)));
+    network.api.paint(world.entities[target], 1, paintingCoords);
+  });
+
+  const escSub = input.keyboard$.subscribe((p) => {
+    const key = p as Phaser.Input.Keyboard.Key;
+    if (key.keyCode !== 27 || !key.isDown) return;
+    const target = 0 as EntityIndex;
+    popPainting(target);
   });
 
   world.registerDisposer(() => clickSub?.unsubscribe());
   world.registerDisposer(() => enterSub?.unsubscribe());
+  world.registerDisposer(() => escSub?.unsubscribe());
 }
