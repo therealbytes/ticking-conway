@@ -50,4 +50,4 @@ export const Colors: { [key: string]: number } = {
   Gray: 0x808080,
 };
 
-export const FrameTime = 1000 / 4;
+export const FrameTime = (1000 / 2) * 0.95;

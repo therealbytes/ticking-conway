@@ -8,6 +8,6 @@ int32 constant GridPosY = 10;
 int32 constant GridDimX = 32;
 int32 constant GridDimY = 32;
 uint256 constant GridCellBitSize = 1;
-uint256 constant TicksPerCall = 4;
+uint256 constant TicksPerCall = 2;
 
 address constant TickPredeployAddr = 0x42000000000000000000000000000000000000A0;
