@@ -28,10 +28,6 @@ export async function createNetworkLayer(config: GameConfig) {
     // LOCAL COMPONENTS
     LoadingState: defineLoadingStateComponent(world),
     Painting: definePaintingComponent(world),
-    TailTransitionTime: defineNumberComponent(world, {
-      id: "TailTransitionTime",
-      metadata: { contractId: "component.TailTransitionTime" },
-    }),
     // ON-CHAIN COMPONENTS
     Position: defineCoordComponent(world, {
       id: "Position",

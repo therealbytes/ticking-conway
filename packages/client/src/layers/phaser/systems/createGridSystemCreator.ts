@@ -1,12 +1,5 @@
 import { tileCoordToPixelCoord } from "@latticexyz/phaserx";
-import {
-  defineComponentSystem,
-  getComponentValue,
-  getComponentValueStrict,
-  setComponent,
-  Component,
-  Type,
-} from "@latticexyz/recs";
+import { defineComponentSystem, getComponentValueStrict, Component, Type } from "@latticexyz/recs";
 import { arrayify } from "@ethersproject/bytes";
 import { NetworkLayer } from "../../network";
 import { PhaserLayer } from "../types";
@@ -18,18 +11,18 @@ export function createGridSystemCreator(
   options: {
     colors: number[];
     alphas: number[];
-    frameTime?: number;
     depth?: number;
+    timeout?: () => number;
   }
 ): (network: NetworkLayer, phaser: PhaserLayer) => void {
-  const { colors, alphas } = options;
-  let { frameTime, depth } = options;
-  [frameTime, depth] = [frameTime || 0, depth || 0];
+  const { colors, alphas, timeout } = options;
+  const { depth: _depth } = options;
+  const depth = _depth || 0;
   return function createGridSystem(network: NetworkLayer, phaser: PhaserLayer) {
     const {
       world,
       components,
-      components: { Position, Dimensions, CellBitSize, TailTransitionTime },
+      components: { Position, Dimensions, CellBitSize },
     } = network;
 
     const {
@@ -80,18 +73,7 @@ export function createGridSystemCreator(
         console.log(`[${endTime}] ${gridComponent.metadata?.contractId} render took ${Date.now() - startTime}ms`);
       };
 
-      if (frameTime && frameTime > 0) {
-        const datenow = Date.now();
-        const currTailTransition = getComponentValue(TailTransitionTime, entity);
-        const currTailTransitionTime = currTailTransition ? currTailTransition.value : 0;
-        const newTailTransitionTime = Math.max(datenow, currTailTransitionTime + frameTime);
-        const newTailTransition: typeof currTailTransition = { value: newTailTransitionTime };
-        const timeout = newTailTransitionTime - datenow;
-        setComponent(TailTransitionTime, entity, newTailTransition);
-        setTimeout(update, timeout);
-      } else {
-        update();
-      }
+      setTimeout(update, timeout ? timeout() : 0);
     });
   };
 }
