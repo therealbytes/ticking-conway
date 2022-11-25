@@ -15,11 +15,16 @@ import { createRectangleObjectRegistry } from "../../../utils/phaser";
 
 export function createGridSystemCreator(
   gridComponentId: string,
-  colors: number[],
-  alphas: number[],
-  frameTime = 0,
-  depth = 0
+  options: {
+    colors: number[];
+    alphas: number[];
+    frameTime?: number;
+    depth?: number;
+  }
 ): (network: NetworkLayer, phaser: PhaserLayer) => void {
+  const { colors, alphas } = options;
+  let { frameTime, depth } = options;
+  [frameTime, depth] = [frameTime || 0, depth || 0];
   return function createGridSystem(network: NetworkLayer, phaser: PhaserLayer) {
     const {
       world,

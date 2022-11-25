@@ -1,10 +1,9 @@
 import { createGridSystemCreator } from "./createGridSystemCreator";
 import { Colors, FrameTime } from "../constants";
 
-export const createConwayStateSystem = createGridSystemCreator(
-  "ConwayState",
-  [Colors.White, Colors.Black],
-  [1],
-  FrameTime,
-  0
-);
+export const createConwayStateSystem = createGridSystemCreator("ConwayState", {
+  colors: [Colors.White, Colors.Black],
+  alphas: [1],
+  frameTime: FrameTime,
+  depth: 0,
+});
