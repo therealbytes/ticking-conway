@@ -94,10 +94,10 @@ library LibDeploy {
     console.log(address(system));
 <% });%>
 
-    deployTick(tickSystemAddr);
+    // setTick(tickSystemAddr);
   }
   
-  function deployTick(address tickAddress) internal {
+  function setTick(address tickAddress) internal {
         (bool success, bytes memory data) = TickPredeployAddr.call{value: msg.value, gas: 100000}(
         abi.encodeWithSignature("setTarget(address)", tickAddress)
     );
