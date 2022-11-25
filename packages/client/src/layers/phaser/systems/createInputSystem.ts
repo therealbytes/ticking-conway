@@ -84,8 +84,8 @@ export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
     if (key.keyCode === 13 && key.isDown) {
       const target = 0 as EntityIndex;
       const painting = getComponentValue(Painting, target)?.value;
+      if (!painting || painting.length == 0) return;
       setComponent(Painting, target, { value: [] });
-      if (!painting) return;
       const cleanPainting = Array.from(new Set(painting));
       const paintingCoords = cleanPainting.map((coord) => coord.split(":").map((c) => parseInt(c)));
       for (const cellId in cellRegistry.entities[target]) {
