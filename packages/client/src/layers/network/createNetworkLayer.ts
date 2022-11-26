@@ -64,6 +64,9 @@ export async function createNetworkLayer(config: GameConfig) {
   function paint(entity: EntityID, value: number, coords: Coord[]) {
     systems["conway.system.paint"].executeTyped(entity, value, coords);
   }
+  function tick() {
+    systems["conway.system.tick"].tickDebug();
+  }
 
   // --- CONTEXT --------------------------------------------------------------------
   const context = {
@@ -75,7 +78,7 @@ export async function createNetworkLayer(config: GameConfig) {
     startSync,
     network,
     actions,
-    api: { paint },
+    api: { paint, tick },
     dev: setupDevSystems(world, encoders as Promise<any>, systems),
   };
 

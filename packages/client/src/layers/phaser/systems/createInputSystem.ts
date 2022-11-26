@@ -81,7 +81,32 @@ export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
     popPainting(target);
   });
 
+  const tSub = input.keyboard$.subscribe((p) => {
+    const key = p as Phaser.Input.Keyboard.Key;
+    if (key.keyCode !== 84 || !key.isDown) return;
+    network.api.tick();
+  });
+
+  const cSub = input.keyboard$.subscribe((p) => {
+    const key = p as Phaser.Input.Keyboard.Key;
+    if (key.keyCode !== 67 || !key.isDown) return;
+    const target = 0 as EntityIndex;
+    const dim = getComponentValueStrict(Dimensions, target);
+    const pos = getComponentValueStrict(Position, target);
+    const { x, y } = pixelCoordToTileCoord(
+      {
+        x: pos.x + dim.x / 2,
+        y: pos.y + dim.y / 2,
+      },
+      tileWidth,
+      tileHeight
+    );
+    phaser.game.scene.getScene(Scenes.Main).cameras.main.centerOn(x, y);
+  });
+
   world.registerDisposer(() => clickSub?.unsubscribe());
   world.registerDisposer(() => enterSub?.unsubscribe());
   world.registerDisposer(() => escSub?.unsubscribe());
+  world.registerDisposer(() => tSub?.unsubscribe());
+  world.registerDisposer(() => cSub?.unsubscribe());
 }
