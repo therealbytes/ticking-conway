@@ -50,25 +50,26 @@ export function createGridSystemCreator(
       const { x: width, y: height } = getComponentValueStrict(Dimensions, entity);
       const { x: gridX, y: gridY } = getComponentValueStrict(Position, entity);
 
+      const unpackedState: number[][] = new Array(width * height);
+      for (let ii = 0; ii < stateBytes.length; ii++) {
+        unpackedState[ii] = unpackByte(stateBytes[ii], cellBitSize);
+      }
+      const state = unpackedState.flat();
+
       const update = () => {
         const startTime = Date.now();
-        for (let ii = 0; ii < stateBytes.length; ii++) {
-          const byte = stateBytes[ii];
-          const unpacked = unpackByte(byte, cellBitSize);
-          for (let jj = 0; jj < unpacked.length; jj++) {
-            const cell = unpacked[jj];
-            const cellIdx = ii * unpacked.length + jj;
-            const [inX, inY] = [cellIdx % width, Math.floor(cellIdx / width)];
-            const cellId = encodeCell(entity, { x: inX, y: inY });
-            let cellObj = cellRegistry.get(entity, cellId);
-            if (!cellObj) {
-              const { x, y } = tileCoordToPixelCoord({ x: gridX + inX, y: gridY + inY }, tileWidth, tileHeight);
-              cellObj = phaserScene.add.rectangle(x, y, tileWidth, tileHeight, colors[0], 1);
-              cellObj.setDepth(depth);
-              cellRegistry.add(entity, cellId, cellObj);
-            }
-            cellObj.setFillStyle(colors[cell % colors.length], alphas[cell % alphas.length]);
+        for (let cellIdx = 0; cellIdx < state.length; cellIdx++) {
+          const cell = state[cellIdx];
+          const [inX, inY] = [cellIdx % width, Math.floor(cellIdx / width)];
+          const cellId = encodeCell(entity, { x: inX, y: inY });
+          let cellObj = cellRegistry.get(entity, cellId);
+          if (!cellObj) {
+            const { x, y } = tileCoordToPixelCoord({ x: gridX + inX, y: gridY + inY }, tileWidth, tileHeight);
+            cellObj = phaserScene.add.rectangle(x, y, tileWidth, tileHeight, colors[0], 1);
+            cellObj.setDepth(depth);
+            cellRegistry.add(entity, cellId, cellObj);
           }
+          cellObj.setFillStyle(colors[cell % colors.length], alphas[cell % alphas.length]);
         }
         const endTime = Date.now();
         console.log(`[${endTime}] ${gridComponent.metadata?.contractId} render took ${Date.now() - startTime}ms`);

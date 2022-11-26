@@ -7,27 +7,13 @@ export enum Scenes {
 
 export enum Maps {
   Main = "Main",
-  Pixel = "Pixel",
-  Tactic = "Tactic",
-  Strategic = "Strategic",
 }
 
 export enum Assets {
   OverworldTileset = "OverworldTileset",
-  MountainTileset = "MountainTileset",
-  MainAtlas = "MainAtlas",
 }
 
-export enum Sprites {
-  Hero,
-  Settlement,
-  Gold,
-  Inventory,
-  GoldShrine,
-  EmberCrown,
-  EscapePortal,
-  Donkey,
-}
+export enum Sprites {}
 
 export enum Animations {}
 
