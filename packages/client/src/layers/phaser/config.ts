@@ -1,28 +1,17 @@
-import { defineSceneConfig, defineScaleConfig, defineMapConfig, defineCameraConfig } from "@latticexyz/phaserx";
-import { Maps, Scenes, TILE_HEIGHT, TILE_WIDTH } from "./constants";
-const ANIMATION_INTERVAL = 200;
+import { defineSceneConfig, defineScaleConfig, defineCameraConfig } from "@latticexyz/phaserx";
+import { Scenes } from "./constants";
+
+export const gridConfig = {
+  frameTime: (1000 / 2) * 0.95,
+  tileWidth: 2,
+  tileHeight: 2,
+};
 
 export const phaserConfig = {
   sceneConfig: {
     [Scenes.Main]: defineSceneConfig({
       assets: {},
-      maps: {
-        [Maps.Main]: defineMapConfig({
-          chunkSize: TILE_WIDTH * 64, // tile size * tile amount
-          tileWidth: TILE_WIDTH,
-          tileHeight: TILE_HEIGHT,
-          backgroundTile: [0],
-          animationInterval: ANIMATION_INTERVAL,
-          tileAnimations: undefined,
-          layers: {
-            layers: {
-              Background: { tilesets: ["Default"], hasHueTintShader: true },
-              Foreground: { tilesets: ["Default"], hasHueTintShader: true },
-            },
-            defaultLayer: "Background",
-          },
-        }),
-      },
+      maps: {},
       sprites: {},
       animations: [],
       tilesets: {},
@@ -40,5 +29,5 @@ export const phaserConfig = {
     maxZoom: 4,
     minZoom: 1,
   }),
-  cullingChunkSize: TILE_HEIGHT * 16,
+  cullingChunkSize: gridConfig.tileWidth * 16,
 };

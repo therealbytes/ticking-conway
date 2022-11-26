@@ -28,13 +28,9 @@ export function createGridSystemCreator(
 
     const {
       scenes: {
-        Main: {
-          phaserScene,
-          maps: {
-            Main: { tileWidth, tileHeight },
-          },
-        },
+        Main: { phaserScene },
       },
+      gridConfig: { tileWidth, tileHeight },
     } = phaser;
 
     const gridComponent = components[gridComponentId as keyof typeof components];

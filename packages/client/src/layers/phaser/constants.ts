@@ -1,17 +1,10 @@
-export const TILE_WIDTH = 3;
-export const TILE_HEIGHT = 3;
-
 export enum Scenes {
   Main = "Main",
 }
 
-export enum Maps {
-  Main = "Main",
-}
+export enum Maps {}
 
-export enum Assets {
-  OverworldTileset = "OverworldTileset",
-}
+export enum Assets {}
 
 export enum Sprites {}
 
@@ -35,5 +28,3 @@ export const Colors: { [key: string]: number } = {
   Silver: 0xc0c0c0,
   Gray: 0x808080,
 };
-
-export const FrameTime = (1000 / 2) * 0.95;

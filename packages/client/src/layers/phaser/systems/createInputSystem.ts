@@ -9,6 +9,7 @@ import {
 import { Coord } from "@latticexyz/utils";
 import { decodePosition, encodePosition } from "./utils";
 import { PhaserLayer } from "../types";
+import { Scenes } from "../constants";
 import { NetworkLayer } from "../../network";
 
 export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
@@ -19,13 +20,9 @@ export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
 
   const {
     scenes: {
-      Main: {
-        input,
-        maps: {
-          Main: { tileWidth, tileHeight },
-        },
-      },
+      Main: { input },
     },
+    gridConfig: { tileWidth, tileHeight },
   } = phaser;
 
   const clickSub = input.click$.subscribe((p) => {

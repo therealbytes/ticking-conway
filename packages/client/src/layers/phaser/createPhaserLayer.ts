@@ -1,7 +1,7 @@
 import { namespaceWorld } from "@latticexyz/recs";
 import { createPhaserEngine } from "@latticexyz/phaserx";
-import { phaserConfig } from "./config";
-import { Colors } from "./constants";
+import { gridConfig, phaserConfig } from "./config";
+import { Colors, Scenes } from "./constants";
 import { NetworkLayer } from "../network";
 import { createConwayStateSystem, createCanvasSystem, createPaintingSystem, createInputSystem } from "./systems";
 
@@ -17,7 +17,7 @@ export async function createPhaserLayer(network: NetworkLayer) {
 
   // --- PHASER ENGINE SETUP --------------------------------------------------------
   const { game, scenes, dispose: disposePhaser } = await createPhaserEngine(phaserConfig);
-  game.scene.scenes[0].cameras.main.setBackgroundColor(Colors.Silver);
+  game.scene.getScene(Scenes.Main).cameras.main.setBackgroundColor(Colors.Silver);
   world.registerDisposer(disposePhaser);
 
   // --- LAYER CONTEXT --------------------------------------------------------------
@@ -27,6 +27,7 @@ export async function createPhaserLayer(network: NetworkLayer) {
     network,
     game,
     scenes,
+    gridConfig,
   };
 
   // --- SYSTEMS --------------------------------------------------------------------
