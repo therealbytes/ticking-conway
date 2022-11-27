@@ -17,7 +17,7 @@ export async function createPhaserLayer(network: NetworkLayer) {
 
   // --- PHASER ENGINE SETUP --------------------------------------------------------
   const { game, scenes, dispose: disposePhaser } = await createPhaserEngine(phaserConfig);
-  game.scene.getScene(Scenes.Main).cameras.main.setBackgroundColor(Colors.Silver);
+  game.scene.getScene(Scenes.Main).cameras.main.setBackgroundColor(Colors.DarkGray);
   world.registerDisposer(disposePhaser);
 
   // --- LAYER CONTEXT --------------------------------------------------------------

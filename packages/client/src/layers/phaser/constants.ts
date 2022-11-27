@@ -27,4 +27,5 @@ export const Colors: { [key: string]: number } = {
   Magenta: 0xff00ff,
   Silver: 0xc0c0c0,
   Gray: 0x808080,
+  DarkGray: 0x3f3f3f,
 };

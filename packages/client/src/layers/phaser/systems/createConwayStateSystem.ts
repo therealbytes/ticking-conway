@@ -12,7 +12,7 @@ export const createConwayStateSystem = (() => {
     return timeout;
   };
   return createGridSystemCreator("ConwayState", {
-    colors: [Colors.White, Colors.Black],
+    colors: [Colors.Black, Colors.White],
     alphas: [1],
     depth: 0,
     timeout: timeout,
