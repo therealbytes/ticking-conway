@@ -37,7 +37,8 @@ async function bootGame() {
     const wsRpc = params.get("wsRpc") || undefined; // || (jsonRpc && jsonRpc.replace("http", "ws"));
     const snapshotServiceUrl = params.get("snapshot") || undefined;
     const streamServiceUrl = params.get("stream") || undefined;
-    const devMode = params.get("dev") === "false";
+    // const devMode = params.get("dev") === "false";
+    const devMode = false;
     const initialBlockNumberString = params.get("initialBlockNumber");
     const initialBlockNumber = initialBlockNumberString ? parseInt(initialBlockNumberString) : 0;
 
