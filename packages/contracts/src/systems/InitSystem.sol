@@ -20,7 +20,7 @@ contract InitSystem is System {
     require(GridStepsPerTick <= 8, "InitSystem: GridStepsPerTick must be <= 8");
     require(GridCellBitSize <= 8, "InitSystem: GridCellBitSize must be <= 8");
     // Set config
-    GridConfigComponent(getAddressById(components, DimensionsComponentID)).set(
+    GridConfigComponent(getAddressById(components, GridConfigComponentID)).set(
       entity,
       GridConfig({
         stepsPerTick: GridStepsPerTick,
@@ -50,6 +50,6 @@ contract InitSystem is System {
       state[ii] = rnd[ii % 32];
       if (gasleft() < 1000000) break;
     }
-    conwayStateComponent.setValue(entity, state);
+    ConwayStateComponent(getAddressById(components, CanvasComponentID)).setValue(entity, state);
   }
 }

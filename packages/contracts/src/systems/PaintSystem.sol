@@ -4,6 +4,7 @@ import "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
+import { Coord } from "../types.sol";
 import { GridConfig, GridConfigComponent, ID as GridConfigComponentID } from "../components/GridConfigComponent.sol";
 import { CanvasComponent, ID as CanvasComponentID } from "../components/CanvasComponent.sol";
 
@@ -15,18 +16,20 @@ contract PaintSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint256 entity, uint256 value, Coord[] memory coords) = abi.decode(arguments, (uint256, uint256, Coord[]));
 
-    GridConfig memory config = GridConfigComponent(getAddressById(components, GridConfigComponentID)).get(entity);
+    GridConfig memory config = GridConfigComponent(getAddressById(components, GridConfigComponentID)).getValue(entity);
+    uint256 cellBitSize = config.cellBitSize;
 
     require(config.drawable, "PaintSystem: grid is not drawable");
-    require(value < 2**config.cellBitSize, "PaintSystem: value too large for cell bit size");
+    require(value < 2**cellBitSize, "PaintSystem: value too large for cell bit size");
 
+    CanvasComponent canvasComponent = CanvasComponent(getAddressById(components, CanvasComponentID));
     bytes memory state = canvasComponent.getValue(entity);
 
     bytes1 v = bytes1(uint8(value));
 
     for (uint256 ii = 0; ii < coords.length; ii++) {
       Coord memory coord = coords[ii];
-      uint256 offset = cellBitSize * uint256(int256((coord.y * dimensions.x) + coord.x));
+      uint256 offset = cellBitSize * uint256(int256((coord.y * config.posX) + coord.x));
       uint256 byteOffset = offset / 8;
       uint256 bitOffset = offset % 8;
       bytes1 b = state[byteOffset];
