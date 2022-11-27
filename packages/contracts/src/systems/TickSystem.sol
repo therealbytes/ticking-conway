@@ -7,6 +7,7 @@ import { getAddressById } from "solecs/utils.sol";
 import { GridId } from "../constants.sol";
 import { Conway } from "../libraries/LibConway.sol";
 import { GridConfig, GridConfigComponent, ID as GridConfigComponentID } from "../components/GridConfigComponent.sol";
+import { PausedComponent, ID as PausedComponentID } from "../components/PausedComponent.sol";
 import { CanvasComponent, ID as CanvasComponentID } from "../components/CanvasComponent.sol";
 import { ConwayStateComponent, ID as ConwayStateComponentID } from "../components/ConwayStateComponent.sol";
 import { TickPredeployAddr } from "../constants.sol";
@@ -18,12 +19,7 @@ uint256 constant ID = uint256(keccak256("conway.system.tick"));
 contract TickSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
-  function tickDebug() external {
-    execute(abi.encodePacked());
-  }
-
   function tick() external {
-    require(msg.sender == TickPredeployAddr, "TickSystem: only tick predeploy can call tick()");
     execute(abi.encodePacked());
   }
 
@@ -31,8 +27,17 @@ contract TickSystem is System {
     uint256 entity = GridId;
     // Get config
     GridConfig memory config = GridConfigComponent(getAddressById(components, GridConfigComponentID)).getValue(entity);
+    // Check requirements
+    require(msg.sender == TickPredeployAddr || config.devMode, "TickSystem: only tick predeploy can call tick()");
     // Get component
     ConwayStateComponent conwayComponent = ConwayStateComponent(getAddressById(components, ConwayStateComponentID));
+    // Check if paused
+    if (config.pausable) {
+      PausedComponent pausedComponent = PausedComponent(getAddressById(components, PausedComponentID));
+      if (pausedComponent.getValue(entity)) {
+        return arguments;
+      }
+    }
     // Get values
     bytes memory state = conwayComponent.getValue(entity);
     uint256 cellBitSize = config.cellBitSize;

@@ -4,8 +4,9 @@ import "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
-import { GridId, GridStepsPerTick, GridCellBitSize, GridDrawable, GridPosX, GridPosY, GridDimX, GridDimY } from "../constants.sol";
+import { GridId, GridStepsPerTick, GridCellBitSize, GridDrawable, GridPausable, GridDevMode, GridPosX, GridPosY, GridDimX, GridDimY, GridPaused } from "../constants.sol";
 import { GridConfig, GridConfigComponent, ID as GridConfigComponentID } from "../components/GridConfigComponent.sol";
+import { PausedComponent, ID as PausedComponentID } from "../components/PausedComponent.sol";
 import { CanvasComponent, ID as CanvasComponentID } from "../components/CanvasComponent.sol";
 import { ConwayStateComponent, ID as ConwayStateComponentID } from "../components/ConwayStateComponent.sol";
 
@@ -26,6 +27,8 @@ contract InitSystem is System {
         stepsPerTick: GridStepsPerTick,
         cellBitSize: GridCellBitSize,
         drawable: GridDrawable,
+        pausable: GridPausable,
+        devMode: GridDevMode,
         posX: GridPosX,
         posY: GridPosY,
         dimX: GridDimX,
@@ -41,6 +44,9 @@ contract InitSystem is System {
     bytes memory state = new bytes(stateSize);
     if (GridDrawable) {
       CanvasComponent(getAddressById(components, CanvasComponentID)).setValue(entity, state);
+    }
+    if (GridPausable) {
+      PausedComponent(getAddressById(components, PausedComponentID)).set(entity, GridPaused);
     }
     bytes32 rnd = blockhash(block.number);
     for (uint256 ii = 0; ii < stateSize; ii++) {
