@@ -69,63 +69,45 @@ export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
     return painting;
   }
 
-  const enterSub = input.keyboard$.subscribe((p) => {
+  const keySub = input.keyboard$.subscribe((p) => {
     const key = p as Phaser.Input.Keyboard.Key;
-    if (key.keyCode !== 13 || !key.isDown) return;
-    const target = 0 as EntityIndex;
-    const painting = popPainting(target);
-    if (!painting) return;
-    const paintingCoords = painting.map((coord) => decodePosition(coord));
-    network.api.paint(world.entities[target], 1, paintingCoords);
-  });
+    if (!key.isDown) return;
 
-  const escSub = input.keyboard$.subscribe((p) => {
-    const key = p as Phaser.Input.Keyboard.Key;
-    if (key.keyCode !== 27 || !key.isDown) return;
-    const target = 0 as EntityIndex;
-    popPainting(target);
-  });
-
-  const tSub = input.keyboard$.subscribe((p) => {
-    const key = p as Phaser.Input.Keyboard.Key;
-    if (key.keyCode !== 84 || !key.isDown) return;
     const target = 0 as EntityIndex;
     const config = getComponentValueStrict(GridConfig, target);
-    if (!config.devMode) return;
-    network.api.tick();
-  });
 
-  const cSub = input.keyboard$.subscribe((p) => {
-    const key = p as Phaser.Input.Keyboard.Key;
-    if (key.keyCode !== 67 || !key.isDown) return;
-    const target = 0 as EntityIndex;
-    const config = getComponentValueStrict(GridConfig, target);
-    const { x, y } = tileCoordToPixelCoord(
-      {
-        x: config.posX + config.dimX / 2,
-        y: config.posY + config.dimY / 2,
-      },
-      tileWidth,
-      tileHeight
-    );
-    phaser.game.scene.getScene(Scenes.Main).cameras.main.centerOn(x, y);
-  });
-
-  const pSub = input.keyboard$.subscribe((p) => {
-    const key = p as Phaser.Input.Keyboard.Key;
-    if (key.keyCode !== 80 || !key.isDown) return;
-    const target = 0 as EntityIndex;
-    const config = getComponentValueStrict(GridConfig, target);
-    if (!config.pausable) return;
-    const paused = getComponentValue(PausedComponent, target)?.value;
-    console.log("paused", paused);
-    network.api.pause(world.entities[target], !paused);
+    if (key.keyCode == Phaser.Input.Keyboard.KeyCodes.ENTER) {
+      // Send painting
+      const painting = popPainting(target);
+      if (!painting) return;
+      const paintingCoords = painting.map((coord) => decodePosition(coord));
+      network.api.paint(world.entities[target], 1, paintingCoords);
+    } else if (key.keyCode == Phaser.Input.Keyboard.KeyCodes.ESC) {
+      // Clear painting
+      popPainting(target);
+    } else if (key.keyCode == Phaser.Input.Keyboard.KeyCodes.T) {
+      // Tick
+      if (!config.devMode) return;
+      network.api.tick();
+    } else if (key.keyCode == Phaser.Input.Keyboard.KeyCodes.C) {
+      // Center camera
+      const { x, y } = tileCoordToPixelCoord(
+        {
+          x: config.posX + config.dimX / 2,
+          y: config.posY + config.dimY / 2,
+        },
+        tileWidth,
+        tileHeight
+      );
+      phaser.game.scene.getScene(Scenes.Main).cameras.main.centerOn(x, y);
+    } else if (key.keyCode == Phaser.Input.Keyboard.KeyCodes.P) {
+      // Toggle pause
+      if (!config.pausable) return;
+      const paused = getComponentValue(PausedComponent, target)?.value;
+      network.api.pause(world.entities[target], !paused);
+    }
   });
 
   world.registerDisposer(() => clickSub?.unsubscribe());
-  world.registerDisposer(() => enterSub?.unsubscribe());
-  world.registerDisposer(() => escSub?.unsubscribe());
-  world.registerDisposer(() => tSub?.unsubscribe());
-  world.registerDisposer(() => cSub?.unsubscribe());
-  world.registerDisposer(() => pSub?.unsubscribe());
+  world.registerDisposer(() => keySub?.unsubscribe());
 }
