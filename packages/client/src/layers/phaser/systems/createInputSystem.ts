@@ -38,15 +38,12 @@ export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
 
     for (const entity of getComponentEntities(GridConfig)) {
       const config = getComponentValueStrict(GridConfig, entity);
-      if (
-        cellPos.x >= config.posX &&
-        cellPos.x < config.posX + config.dimX &&
-        cellPos.y >= config.posY &&
-        cellPos.y < config.posY + config.dimY
-      ) {
+      const pos = { x: config.posX, y: config.posY };
+      const dim = { x: config.dimX, y: config.dimY };
+      if (cellPos.x >= pos.x && cellPos.x < pos.x + dim.x && cellPos.y >= pos.y && cellPos.y < pos.y + dim.y) {
         target = entity;
         if (!config.drawable) return;
-        cellInPos = { x: cellPos.x - config.posX, y: cellPos.y - config.posY };
+        cellInPos = { x: cellPos.x - pos.x, y: cellPos.y - pos.y };
         break;
       }
     }
