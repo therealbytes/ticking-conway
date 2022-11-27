@@ -20,10 +20,11 @@ contract TickSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function tick() external {
-    execute(abi.encodePacked());
+    executeTyped(false);
   }
 
   function execute(bytes memory arguments) public returns (bytes memory) {
+    bool debug = abi.decode(arguments, (bool));
     uint256 entity = GridId;
     // Get config
     GridConfig memory config = GridConfigComponent(getAddressById(components, GridConfigComponentID)).getValue(entity);
@@ -32,10 +33,10 @@ contract TickSystem is System {
     // Get component
     ConwayStateComponent conwayComponent = ConwayStateComponent(getAddressById(components, ConwayStateComponentID));
     // Check if paused
-    if (config.pausable) {
+    if (!debug && config.pausable) {
       PausedComponent pausedComponent = PausedComponent(getAddressById(components, PausedComponentID));
       if (pausedComponent.getValue(entity)) {
-        return arguments;
+        return abi.encodePacked();
       }
     }
     // Get values
@@ -84,5 +85,9 @@ contract TickSystem is System {
         ii++;
       }
     }
+  }
+
+  function executeTyped(bool debug) public returns (bytes memory) {
+    return execute(abi.encode(debug));
   }
 }

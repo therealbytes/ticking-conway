@@ -1,6 +1,7 @@
 {
   "components": [
     "GridConfigComponent",
+    "PausedComponent",
     "ConwayStateComponent",
     "CanvasComponent"
   ],
@@ -16,7 +17,8 @@
       "writeAccess": [
         "GridConfigComponent",
         "ConwayStateComponent",
-        "CanvasComponent"
+        "CanvasComponent",
+        "PausedComponent"
       ],
       "initialize": "new bytes(0)"
     },
@@ -31,6 +33,12 @@
       "name": "PaintSystem",
       "writeAccess": [
         "CanvasComponent"
+      ]
+    },
+    {
+      "name": "PauseSystem",
+      "writeAccess": [
+        "PausedComponent"
       ]
     }
   ]
