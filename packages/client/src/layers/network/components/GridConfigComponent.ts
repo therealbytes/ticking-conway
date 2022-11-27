@@ -7,6 +7,8 @@ export function defineGridConfigComponent(world: World) {
       stepsPerTick: Type.Number,
       cellBitSize: Type.Number,
       drawable: Type.Boolean,
+      pausable: Type.Boolean,
+      devMode: Type.Boolean,
       dimX: Type.Number,
       dimY: Type.Number,
       posX: Type.Number,

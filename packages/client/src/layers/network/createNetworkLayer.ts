@@ -1,6 +1,11 @@
 import { createWorld, EntityID } from "@latticexyz/recs";
 import { Coord } from "@latticexyz/utils";
-import { createActionSystem, defineStringComponent, setupMUDNetwork } from "@latticexyz/std-client";
+import {
+  createActionSystem,
+  defineBoolComponent,
+  defineStringComponent,
+  setupMUDNetwork,
+} from "@latticexyz/std-client";
 
 import { SystemTypes } from "contracts/types/SystemTypes";
 import { SystemAbis } from "contracts/types/SystemAbis.mjs";
@@ -27,6 +32,10 @@ export async function createNetworkLayer(config: GameConfig) {
     Painting: definePaintingComponent(world),
     // ON-CHAIN COMPONENTS
     GridConfig: defineGridConfigComponent(world),
+    PausedComponent: defineBoolComponent(world, {
+      id: "PausedComponent",
+      metadata: { contractId: "conway.component.paused" },
+    }),
     ConwayState: defineStringComponent(world, {
       id: "ConwayState",
       metadata: { contractId: "conway.component.conwayState" },
@@ -51,7 +60,10 @@ export async function createNetworkLayer(config: GameConfig) {
     systems["conway.system.paint"].executeTyped(entity, value, coords);
   }
   function tick() {
-    systems["conway.system.tick"].tickDebug();
+    systems["conway.system.tick"].executeTyped(true);
+  }
+  function pause(entity: EntityID, pause: boolean) {
+    systems["conway.system.pause"].executeTyped(entity, pause);
   }
 
   // --- CONTEXT --------------------------------------------------------------------
@@ -64,7 +76,7 @@ export async function createNetworkLayer(config: GameConfig) {
     startSync,
     network,
     actions,
-    api: { paint, tick },
+    api: { paint, tick, pause },
     dev: setupDevSystems(world, encoders as Promise<any>, systems),
   };
 

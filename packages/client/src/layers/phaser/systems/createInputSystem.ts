@@ -15,7 +15,7 @@ import { NetworkLayer } from "../../network";
 export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
   const {
     world,
-    components: { GridConfig, Painting },
+    components: { GridConfig, PausedComponent, Painting },
   } = network;
 
   const {
@@ -89,6 +89,9 @@ export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
   const tSub = input.keyboard$.subscribe((p) => {
     const key = p as Phaser.Input.Keyboard.Key;
     if (key.keyCode !== 84 || !key.isDown) return;
+    const target = 0 as EntityIndex;
+    const config = getComponentValueStrict(GridConfig, target);
+    if (!config.devMode) return;
     network.api.tick();
   });
 
@@ -108,9 +111,21 @@ export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
     phaser.game.scene.getScene(Scenes.Main).cameras.main.centerOn(x, y);
   });
 
+  const pSub = input.keyboard$.subscribe((p) => {
+    const key = p as Phaser.Input.Keyboard.Key;
+    if (key.keyCode !== 80 || !key.isDown) return;
+    const target = 0 as EntityIndex;
+    const config = getComponentValueStrict(GridConfig, target);
+    if (!config.pausable) return;
+    const paused = getComponentValue(PausedComponent, target)?.value;
+    console.log("paused", paused);
+    network.api.pause(world.entities[target], !paused);
+  });
+
   world.registerDisposer(() => clickSub?.unsubscribe());
   world.registerDisposer(() => enterSub?.unsubscribe());
   world.registerDisposer(() => escSub?.unsubscribe());
   world.registerDisposer(() => tSub?.unsubscribe());
   world.registerDisposer(() => cSub?.unsubscribe());
+  world.registerDisposer(() => pSub?.unsubscribe());
 }
