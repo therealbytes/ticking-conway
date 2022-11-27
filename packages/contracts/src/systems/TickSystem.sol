@@ -41,42 +41,18 @@ contract TickSystem is System {
     }
     // Get values
     bytes memory state = conwayComponent.getValue(entity);
-    uint256 cellBitSize = config.cellBitSize;
-    // Tick
     // Update state with canvas
     if (config.drawable) {
       CanvasComponent canvasComponent = CanvasComponent(getAddressById(components, CanvasComponentID));
       bytes memory canvas = canvasComponent.getValue(entity);
-      // ----
-      for (uint256 ii = 0; ii < canvas.length; ii++) {
-        bytes1 n = canvas[ii];
-        if (n == 0) {
-          continue;
-        }
-        bytes1 b = state[ii];
-        if (b == 0) {
-          state[ii] = n;
-          continue;
-        }
-        for (uint256 jj = 0; jj < 8 / cellBitSize; jj++) {
-          uint256 offset = jj * cellBitSize;
-          bytes1 mask = bytes1(uint8(2**cellBitSize - 1)) << (8 - offset - cellBitSize);
-          bytes1 sn = n & mask;
-          if (sn == 0) {
-            continue;
-          }
-          b = (b & ~mask) | sn;
-        }
-        state[ii] = b;
-      }
-      // ----
+      printCanvas(state, canvas, config.cellBitSize);
       // Set value
       canvasComponent.setValue(entity, new bytes(canvas.length));
     }
     // Execute steps
     uint256 ii = 0;
     while (true) {
-      state = Conway.step(uint256(int256(config.dimX)), uint256(int256(config.dimY)), cellBitSize, state);
+      state = Conway.step(uint256(int256(config.dimX)), uint256(int256(config.dimY)), config.cellBitSize, state);
       if (ii == config.stepsPerTick - 1) {
         conwayComponent.setValue(entity, state);
         break;
@@ -89,5 +65,33 @@ contract TickSystem is System {
 
   function executeTyped(bool debug) public returns (bytes memory) {
     return execute(abi.encode(debug));
+  }
+
+  function printCanvas(
+    bytes memory state,
+    bytes memory canvas,
+    uint256 cellBitSize
+  ) internal pure {
+    for (uint256 ii = 0; ii < canvas.length; ii++) {
+      bytes1 n = canvas[ii];
+      if (n == 0) {
+        continue;
+      }
+      bytes1 b = state[ii];
+      if (b == 0) {
+        state[ii] = n;
+        continue;
+      }
+      for (uint256 jj = 0; jj < 8 / cellBitSize; jj++) {
+        uint256 offset = jj * cellBitSize;
+        bytes1 mask = bytes1(uint8(2**cellBitSize - 1)) << (8 - offset - cellBitSize);
+        bytes1 sn = n & mask;
+        if (sn == 0) {
+          continue;
+        }
+        b = (b & ~mask) | sn;
+      }
+      state[ii] = b;
+    }
   }
 }
