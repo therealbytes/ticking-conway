@@ -38,7 +38,7 @@ export function createPaintingSystem(network: NetworkLayer, phaser: PhaserLayer)
         const cellId = encodeCell(entity, { x: inX, y: inY });
         let cellObj = cellRegistry.get(entity, cellId);
         if (!cellObj) {
-          const color = Colors.Blue;
+          const color = Colors.Gray;
           const { x, y } = tileCoordToPixelCoord({ x: gridX + inX, y: gridY + inY }, tileWidth, tileHeight);
           cellObj = phaserScene.add.rectangle(x, y, tileWidth, tileHeight, color, 1);
           cellObj.setDepth(1);
