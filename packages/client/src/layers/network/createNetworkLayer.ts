@@ -78,8 +78,8 @@ export async function createNetworkLayer(config: GameConfig) {
   }
   function pause(entity: EntityIndex, pause: boolean) {
     actions.add({
-      id: `pause ${entity}` as EntityID,
-      metadata: { actionType: "pause" },
+      id: `pause ${entity} ${Date.now()}` as EntityID,
+      metadata: { actionType: pause ? "pause" : "unpause" },
       requirement: () => true,
       components: {},
       execute: () => systems["conway.system.pause"].executeTyped(world.entities[entity], pause),
