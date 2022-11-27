@@ -9,7 +9,7 @@ import { createRectangleObjectRegistry } from "../../../utils/phaser";
 export function createPaintingSystem(network: NetworkLayer, phaser: PhaserLayer) {
   const {
     world,
-    components: { Position, Painting },
+    components: { GridConfig, Painting },
   } = network;
 
   const {
@@ -24,7 +24,8 @@ export function createPaintingSystem(network: NetworkLayer, phaser: PhaserLayer)
   defineComponentSystem(world, Painting, ({ entity, value }) => {
     const state = value[0]?.value;
     if (!state) return console.warn("no grid state");
-    const { x: gridX, y: gridY } = getComponentValueStrict(Position, entity);
+
+    const { posX: gridX, posY: gridY } = getComponentValueStrict(GridConfig, entity);
 
     const update = () => {
       if (state.length === 0) {

@@ -15,7 +15,7 @@ import { NetworkLayer } from "../../network";
 export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
   const {
     world,
-    components: { Dimensions, Position, Painting },
+    components: { GridConfig, Painting },
   } = network;
 
   const {
@@ -36,12 +36,16 @@ export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
     let target: EntityIndex | undefined;
     let cellInPos: Coord | undefined;
 
-    for (const entity of getComponentEntities(Dimensions)) {
-      const dim = getComponentValueStrict(Dimensions, entity);
-      const pos = getComponentValueStrict(Position, entity);
-      if (cellPos.x >= pos.x && cellPos.x < pos.x + dim.x && cellPos.y >= pos.y && cellPos.y < pos.y + dim.y) {
+    for (const entity of getComponentEntities(GridConfig)) {
+      const config = getComponentValueStrict(GridConfig, entity);
+      if (
+        cellPos.x >= config.posX &&
+        cellPos.x < config.posX + config.dimX &&
+        cellPos.y >= config.posY &&
+        cellPos.y < config.posY + config.dimY
+      ) {
         target = entity;
-        cellInPos = { x: cellPos.x - pos.x, y: cellPos.y - pos.y };
+        cellInPos = { x: cellPos.x - config.posX, y: cellPos.y - config.posY };
         break;
       }
     }
@@ -91,12 +95,11 @@ export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
     const key = p as Phaser.Input.Keyboard.Key;
     if (key.keyCode !== 67 || !key.isDown) return;
     const target = 0 as EntityIndex;
-    const dim = getComponentValueStrict(Dimensions, target);
-    const pos = getComponentValueStrict(Position, target);
+    const config = getComponentValueStrict(GridConfig, target);
     const { x, y } = pixelCoordToTileCoord(
       {
-        x: pos.x + dim.x / 2,
-        y: pos.y + dim.y / 2,
+        x: config.posX + config.dimX / 2,
+        y: config.posY + config.dimY / 2,
       },
       tileWidth,
       tileHeight

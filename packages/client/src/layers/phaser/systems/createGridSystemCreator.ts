@@ -13,7 +13,7 @@ export function createGridSystemCreator(
     colors: number[];
     alphas: number[];
     depth?: number;
-    timeout?: () => number;
+    timeout?: (stepsPerTick: number) => number;
   }
 ): (network: NetworkLayer, phaser: PhaserLayer) => void {
   const { colors, alphas, timeout } = options;
@@ -23,7 +23,7 @@ export function createGridSystemCreator(
     const {
       world,
       components,
-      components: { Position, Dimensions, CellBitSize },
+      components: { GridConfig },
     } = network;
 
     const {
@@ -42,9 +42,10 @@ export function createGridSystemCreator(
       if (!gridState) return console.warn("no grid state");
       const stateBytes = arrayify(gridState.value);
 
-      const cellBitSize = getComponentValueStrict(CellBitSize, entity).value;
-      const { x: width, y: height } = getComponentValueStrict(Dimensions, entity);
-      const { x: gridX, y: gridY } = getComponentValueStrict(Position, entity);
+      const gridConfig = getComponentValueStrict(GridConfig, entity);
+      const cellBitSize = gridConfig.cellBitSize;
+      const [width, height] = [gridConfig.dimX, gridConfig.dimY];
+      const [gridX, gridY] = [gridConfig.posX, gridConfig.posY];
 
       const unpackedState: number[][] = new Array(width * height);
       for (let ii = 0; ii < stateBytes.length; ii++) {
@@ -71,7 +72,7 @@ export function createGridSystemCreator(
         console.log(`[${endTime}] ${gridComponent.metadata?.contractId} render took ${Date.now() - startTime}ms`);
       };
 
-      setTimeout(update, timeout ? timeout() : 0);
+      setTimeout(update, timeout ? timeout(gridConfig.stepsPerTick) : 0);
     });
   };
 }

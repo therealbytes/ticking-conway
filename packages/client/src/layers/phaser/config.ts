@@ -2,7 +2,6 @@ import { defineSceneConfig, defineScaleConfig, defineCameraConfig } from "@latti
 import { Scenes } from "./constants";
 
 export const gridConfig = {
-  frameTime: (1000 / 2) * 0.95,
   tileWidth: 2,
   tileHeight: 2,
 };
