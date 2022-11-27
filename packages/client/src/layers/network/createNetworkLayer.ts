@@ -53,12 +53,13 @@ export async function createNetworkLayer(config: GameConfig) {
   >(getNetworkConfig(config), world, components, SystemAbis);
 
   // --- ACTION SYSTEM --------------------------------------------------------------
-  const actions = createActionSystem(world, txReduced$);
+  const actions = createActionSystem<{ actionType: string }>(world, txReduced$);
 
   // --- API ------------------------------------------------------------------------
   function paint(entity: EntityIndex, value: number, coords: Coord[]) {
     actions.add({
       id: `paint ${entity} ${coords}` as EntityID,
+      metadata: { actionType: "paint" },
       requirement: () => true,
       components: {},
       execute: () => systems["conway.system.paint"].executeTyped(world.entities[entity], value, coords),
@@ -68,6 +69,7 @@ export async function createNetworkLayer(config: GameConfig) {
   function tick() {
     actions.add({
       id: `tick` as EntityID,
+      metadata: { actionType: "tick" },
       requirement: () => true,
       components: {},
       execute: () => systems["conway.system.tick"].executeTyped(true),
@@ -77,6 +79,7 @@ export async function createNetworkLayer(config: GameConfig) {
   function pause(entity: EntityIndex, pause: boolean) {
     actions.add({
       id: `pause ${entity}` as EntityID,
+      metadata: { actionType: "pause" },
       requirement: () => true,
       components: {},
       execute: () => systems["conway.system.pause"].executeTyped(world.entities[entity], pause),

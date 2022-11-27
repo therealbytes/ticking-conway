@@ -35,7 +35,7 @@ export function registerActionQueue() {
             const state = ActionStateString[actionData.state as ActionState];
             return (
               <p key={`action${e}`}>
-                {Action.world.entities[e]}: {state}
+                {actionData.metadata?.actionType}: {state}
               </p>
             );
           })}
