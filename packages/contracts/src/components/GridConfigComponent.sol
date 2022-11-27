@@ -18,8 +18,8 @@ contract GridConfigComponent is BareComponent {
   constructor(address world) BareComponent(world, ID) {}
 
   function getSchema() public pure override returns (string[] memory keys, LibTypes.SchemaValue[] memory values) {
-    keys = new string[](1);
-    values = new LibTypes.SchemaValue[](1);
+    keys = new string[](7);
+    values = new LibTypes.SchemaValue[](7);
 
     keys[0] = "stepsPerTick";
     values[0] = LibTypes.SchemaValue.UINT8;

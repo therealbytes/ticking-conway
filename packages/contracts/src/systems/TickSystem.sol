@@ -9,6 +9,7 @@ import { Conway } from "../libraries/LibConway.sol";
 import { GridConfig, GridConfigComponent, ID as GridConfigComponentID } from "../components/GridConfigComponent.sol";
 import { CanvasComponent, ID as CanvasComponentID } from "../components/CanvasComponent.sol";
 import { ConwayStateComponent, ID as ConwayStateComponentID } from "../components/ConwayStateComponent.sol";
+import { TickPredeployAddr } from "../constants.sol";
 
 // import "forge-std/console.sol";
 
@@ -29,7 +30,7 @@ contract TickSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 entity = GridId;
     // Get config
-    GridConfig memory config = GridConfigComponent(getAddressById(components, GridConfigComponentID)).get(entity);
+    GridConfig memory config = GridConfigComponent(getAddressById(components, GridConfigComponentID)).getValue(entity);
     // Get component
     ConwayStateComponent conwayComponent = ConwayStateComponent(getAddressById(components, ConwayStateComponentID));
     // Get values
@@ -70,7 +71,7 @@ contract TickSystem is System {
     uint256 ii = 0;
     while (true) {
       state = Conway.step(uint256(int256(config.dimX)), uint256(int256(config.dimY)), cellBitSize, state);
-      if (ii == TicksPerCall - 1) {
+      if (ii == config.stepsPerTick - 1) {
         conwayComponent.setValue(entity, state);
         break;
       } else {
