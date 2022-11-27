@@ -48,8 +48,8 @@ contract InitSystem is System {
         rnd = bytes32(uint256(keccak256(abi.encodePacked(rnd))));
       }
       state[ii] = rnd[ii % 32];
-      if (gasleft() < 1000000) break;
+      // if (gasleft() < 1000000) break;
     }
-    ConwayStateComponent(getAddressById(components, CanvasComponentID)).setValue(entity, state);
+    ConwayStateComponent(getAddressById(components, ConwayStateComponentID)).setValue(entity, state);
   }
 }
