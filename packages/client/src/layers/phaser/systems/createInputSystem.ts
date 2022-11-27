@@ -1,4 +1,4 @@
-import { pixelCoordToTileCoord } from "@latticexyz/phaserx";
+import { pixelCoordToTileCoord, tileCoordToPixelCoord } from "@latticexyz/phaserx";
 import {
   getComponentValueStrict,
   getComponentEntities,
@@ -22,7 +22,7 @@ export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
     scenes: {
       Main: { input },
     },
-    gridConfig: { tileWidth, tileHeight },
+    gridRenderConfig: { tileWidth, tileHeight },
   } = phaser;
 
   const clickSub = input.click$.subscribe((p) => {
@@ -96,7 +96,7 @@ export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
     if (key.keyCode !== 67 || !key.isDown) return;
     const target = 0 as EntityIndex;
     const config = getComponentValueStrict(GridConfig, target);
-    const { x, y } = pixelCoordToTileCoord(
+    const { x, y } = tileCoordToPixelCoord(
       {
         x: config.posX + config.dimX / 2,
         y: config.posY + config.dimY / 2,

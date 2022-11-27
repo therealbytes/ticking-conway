@@ -1,7 +1,7 @@
 import { defineSceneConfig, defineScaleConfig, defineCameraConfig } from "@latticexyz/phaserx";
 import { Scenes } from "./constants";
 
-export const gridConfig = {
+export const gridRenderConfig = {
   tileWidth: 2,
   tileHeight: 2,
 };
@@ -28,5 +28,5 @@ export const phaserConfig = {
     maxZoom: 4,
     minZoom: 1,
   }),
-  cullingChunkSize: gridConfig.tileWidth * 16,
+  cullingChunkSize: gridRenderConfig.tileWidth * 16,
 };

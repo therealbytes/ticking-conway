@@ -16,7 +16,7 @@ export function createPaintingSystem(network: NetworkLayer, phaser: PhaserLayer)
     scenes: {
       Main: { phaserScene },
     },
-    gridConfig: { tileWidth, tileHeight },
+    gridRenderConfig: { tileWidth, tileHeight },
   } = phaser;
 
   const cellRegistry = createRectangleObjectRegistry();

@@ -1,6 +1,6 @@
 import { namespaceWorld } from "@latticexyz/recs";
 import { createPhaserEngine } from "@latticexyz/phaserx";
-import { gridConfig, phaserConfig } from "./config";
+import { gridRenderConfig, phaserConfig } from "./config";
 import { Colors, Scenes } from "./constants";
 import { NetworkLayer } from "../network";
 import { createConwayStateSystem, createCanvasSystem, createPaintingSystem, createInputSystem } from "./systems";
@@ -27,7 +27,7 @@ export async function createPhaserLayer(network: NetworkLayer) {
     network,
     game,
     scenes,
-    gridConfig,
+    gridRenderConfig,
   };
 
   // --- SYSTEMS --------------------------------------------------------------------
