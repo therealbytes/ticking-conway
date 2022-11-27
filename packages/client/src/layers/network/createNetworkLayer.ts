@@ -10,7 +10,7 @@ import {
 import { SystemTypes } from "contracts/types/SystemTypes";
 import { SystemAbis } from "contracts/types/SystemAbis.mjs";
 
-import { setupDevSystems } from "./setup";
+// import { setupDevSystems } from "./setup";
 import { defineLoadingStateComponent, definePaintingComponent, defineGridConfigComponent } from "./components";
 
 import { GameConfig, getNetworkConfig } from "./config";
@@ -77,7 +77,7 @@ export async function createNetworkLayer(config: GameConfig) {
     network,
     actions,
     api: { paint, tick, pause },
-    dev: setupDevSystems(world, encoders as Promise<any>, systems),
+    // dev: setupDevSystems(world, encoders as Promise<any>, systems),
   };
 
   return context;

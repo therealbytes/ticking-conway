@@ -7,12 +7,6 @@
   ],
   "systems": [
     {
-      "name": "ComponentDevSystem",
-      "writeAccess": [
-        "*"
-      ]
-    },
-    {
       "name": "InitSystem",
       "writeAccess": [
         "GridConfigComponent",
