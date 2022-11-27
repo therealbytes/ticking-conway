@@ -78,7 +78,7 @@ export async function createNetworkLayer(config: GameConfig) {
   }
   function pause(entity: EntityIndex, pause: boolean) {
     actions.add({
-      id: `pause ${entity} ${Date.now()}` as EntityID,
+      id: `pause ${entity}` as EntityID,
       metadata: { actionType: pause ? "pause" : "unpause" },
       requirement: () => true,
       components: {},
