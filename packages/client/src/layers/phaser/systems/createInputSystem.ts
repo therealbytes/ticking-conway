@@ -15,7 +15,7 @@ import { NetworkLayer } from "../../network";
 export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
   const {
     world,
-    components: { GridConfig, PausedComponent, Painting },
+    components: { GridConfig, Paused, Painting },
   } = network;
 
   const {
@@ -103,7 +103,7 @@ export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
     } else if (key.keyCode == Phaser.Input.Keyboard.KeyCodes.P) {
       // Toggle pause
       if (!config.pausable) return;
-      const paused = getComponentValue(PausedComponent, target)?.value;
+      const paused = getComponentValue(Paused, target)?.value;
       network.api.pause(world.entities[target], !paused);
     }
   });

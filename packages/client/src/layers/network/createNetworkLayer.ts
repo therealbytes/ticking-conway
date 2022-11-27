@@ -32,8 +32,8 @@ export async function createNetworkLayer(config: GameConfig) {
     Painting: definePaintingComponent(world),
     // ON-CHAIN COMPONENTS
     GridConfig: defineGridConfigComponent(world),
-    PausedComponent: defineBoolComponent(world, {
-      id: "PausedComponent",
+    Paused: defineBoolComponent(world, {
+      id: "Paused",
       metadata: { contractId: "conway.component.paused" },
     }),
     ConwayState: defineStringComponent(world, {
