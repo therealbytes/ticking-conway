@@ -9,7 +9,7 @@ export function definePaintingComponent(world: World) {
     {
       id: "Painting",
       metadata: {
-        contractId: "component.Painting",
+        contractId: "conway.component.painting",
       },
     }
   );

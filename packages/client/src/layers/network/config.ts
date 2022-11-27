@@ -20,7 +20,7 @@ export const getNetworkConfig: (networkConfig: GameConfig) => SetupContractConfi
   clock: {
     period: config.blockTime,
     initialTime: 0,
-    syncInterval: 60_000,
+    syncInterval: 5_000,
   },
   provider: {
     chainId: config.chainId,
@@ -43,5 +43,4 @@ export const getNetworkConfig: (networkConfig: GameConfig) => SetupContractConfi
   cacheAgeThreshold: 60 * 60, // Invalidate cache after 1h
   cacheInterval: 120, // Store cache every 2 minutes
   limitEventsPerSecond: 100_000,
-  snapshotNumChunks: 20,
 });
