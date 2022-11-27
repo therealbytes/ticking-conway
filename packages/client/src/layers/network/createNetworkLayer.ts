@@ -1,16 +1,13 @@
 import { createWorld, EntityID } from "@latticexyz/recs";
-import { setupDevSystems } from "./setup";
-import {
-  createActionSystem,
-  defineCoordComponent,
-  defineNumberComponent,
-  defineStringComponent,
-  setupMUDNetwork,
-} from "@latticexyz/std-client";
+import { Coord } from "@latticexyz/utils";
+import { createActionSystem, defineStringComponent, setupMUDNetwork } from "@latticexyz/std-client";
 
-import { defineLoadingStateComponent, definePaintingComponent } from "./components";
 import { SystemTypes } from "contracts/types/SystemTypes";
 import { SystemAbis } from "contracts/types/SystemAbis.mjs";
+
+import { setupDevSystems } from "./setup";
+import { defineLoadingStateComponent, definePaintingComponent, defineGridConfigComponent } from "./components";
+
 import { GameConfig, getNetworkConfig } from "./config";
 
 /**
@@ -29,18 +26,7 @@ export async function createNetworkLayer(config: GameConfig) {
     LoadingState: defineLoadingStateComponent(world),
     Painting: definePaintingComponent(world),
     // ON-CHAIN COMPONENTS
-    Position: defineCoordComponent(world, {
-      id: "Position",
-      metadata: { contractId: "conway.component.position" },
-    }),
-    Dimensions: defineCoordComponent(world, {
-      id: "Dimensions",
-      metadata: { contractId: "conway.component.dimensions" },
-    }),
-    CellBitSize: defineNumberComponent(world, {
-      id: "CellBitSize",
-      metadata: { contractId: "conway.component.cellBitSize" },
-    }),
+    GridConfig: defineGridConfigComponent(world),
     ConwayState: defineStringComponent(world, {
       id: "ConwayState",
       metadata: { contractId: "conway.component.conwayState" },
