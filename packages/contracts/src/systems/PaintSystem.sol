@@ -4,9 +4,7 @@ import "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
-import { Coord } from "../types.sol";
-import { DimensionsComponent, ID as DimensionsComponentID } from "../components/DimensionsComponent.sol";
-import { CellBitSizeComponent, ID as CellBitSizeComponentID } from "../components/CellBitSizeComponent.sol";
+import { GridConfig, GridConfigComponent, ID as GridConfigComponentID } from "../components/GridConfigComponent.sol";
 import { CanvasComponent, ID as CanvasComponentID } from "../components/CanvasComponent.sol";
 
 uint256 constant ID = uint256(keccak256("conway.system.paint"));
@@ -17,17 +15,12 @@ contract PaintSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint256 entity, uint256 value, Coord[] memory coords) = abi.decode(arguments, (uint256, uint256, Coord[]));
 
-    DimensionsComponent dimensionsComponent = DimensionsComponent(getAddressById(components, DimensionsComponentID));
-    CellBitSizeComponent cellBitSizeComponent = CellBitSizeComponent(
-      getAddressById(components, CellBitSizeComponentID)
-    );
-    CanvasComponent canvasComponent = CanvasComponent(getAddressById(components, CanvasComponentID));
+    GridConfig memory config = GridConfigComponent(getAddressById(components, GridConfigComponentID)).get(entity);
 
-    Coord memory dimensions = dimensionsComponent.getValue(entity);
-    uint256 cellBitSize = cellBitSizeComponent.getValue(entity);
+    require(config.drawable, "PaintSystem: grid is not drawable");
+    require(value < 2**config.cellBitSize, "PaintSystem: value too large for cell bit size");
+
     bytes memory state = canvasComponent.getValue(entity);
-
-    require(value < 2**cellBitSize, "PaintSystem: Value too large for cell bit size");
 
     bytes1 v = bytes1(uint8(value));
 

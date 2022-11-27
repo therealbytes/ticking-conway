@@ -4,11 +4,8 @@ import "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
-import { Coord } from "../types.sol";
-import { GridId, GridPosX, GridPosY, GridDimX, GridDimY, GridCellBitSize } from "../constants.sol";
-import { PositionComponent, ID as PositionComponentID } from "../components/PositionComponent.sol";
-import { DimensionsComponent, ID as DimensionsComponentID } from "../components/DimensionsComponent.sol";
-import { CellBitSizeComponent, ID as CellBitSizeComponentID } from "../components/CellBitSizeComponent.sol";
+import { GridId, GridStepsPerTick, GridCellBitSize, GridDrawable, GridPosX, GridPosY, GridDimX, GridDimY } from "../constants.sol";
+import { GridConfig, GridConfigComponent, ID as GridConfigComponentID } from "../components/GridConfigComponent.sol";
 import { CanvasComponent, ID as CanvasComponentID } from "../components/CanvasComponent.sol";
 import { ConwayStateComponent, ID as ConwayStateComponentID } from "../components/ConwayStateComponent.sol";
 
@@ -20,34 +17,38 @@ contract InitSystem is System {
   function execute(bytes memory) public returns (bytes memory) {
     uint256 entity = GridId;
     // Check constants
-    // Get components
-    PositionComponent positionComponent = PositionComponent(getAddressById(components, PositionComponentID));
-    DimensionsComponent dimensionsComponent = DimensionsComponent(getAddressById(components, DimensionsComponentID));
-    CellBitSizeComponent cellBitSizeComponent = CellBitSizeComponent(
-      getAddressById(components, CellBitSizeComponentID)
+    require(GridStepsPerTick <= 8, "InitSystem: GridStepsPerTick must be <= 8");
+    require(GridCellBitSize <= 8, "InitSystem: GridCellBitSize must be <= 8");
+    // Set config
+    GridConfigComponent(getAddressById(components, DimensionsComponentID)).set(
+      entity,
+      GridConfig({
+        stepsPerTick: GridStepsPerTick,
+        cellBitSize: GridCellBitSize,
+        drawable: GridDrawable,
+        posX: GridPosX,
+        posY: GridPosY,
+        dimX: GridDimX,
+        dimY: GridDimY
+      })
     );
-    ConwayStateComponent conwayStateComponent = ConwayStateComponent(
-      getAddressById(components, ConwayStateComponentID)
-    );
-    CanvasComponent canvasComponent = CanvasComponent(getAddressById(components, CanvasComponentID));
-    // Set values
-    positionComponent.set(entity, Coord(GridPosX, GridPosY));
-    dimensionsComponent.set(entity, Coord(GridDimX, GridDimY));
-    cellBitSizeComponent.set(entity, GridCellBitSize);
-    // Randomize initial grid state from block hash
+    // Randomize initial conway state from block hash
     uint256 nCells = uint256(int256(GridDimX)) * uint256(int256(GridDimY));
     uint256 stateSize = (nCells * GridCellBitSize) / 8;
     if ((8 * stateSize) / GridCellBitSize < nCells) {
       stateSize += 1;
     }
     bytes memory state = new bytes(stateSize);
-    canvasComponent.setValue(entity, state);
+    if (GridDrawable) {
+      CanvasComponent(getAddressById(components, CanvasComponentID)).setValue(entity, state);
+    }
     bytes32 rnd = blockhash(block.number);
     for (uint256 ii = 0; ii < stateSize; ii++) {
       if (ii % 32 == 0) {
         rnd = bytes32(uint256(keccak256(abi.encodePacked(rnd))));
       }
       state[ii] = rnd[ii % 32];
+      if (gasleft() < 1000000) break;
     }
     conwayStateComponent.setValue(entity, state);
   }
