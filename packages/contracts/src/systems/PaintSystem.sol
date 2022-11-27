@@ -29,7 +29,7 @@ contract PaintSystem is System {
 
     for (uint256 ii = 0; ii < coords.length; ii++) {
       Coord memory coord = coords[ii];
-      uint256 offset = cellBitSize * uint256(int256((coord.y * config.posX) + coord.x));
+      uint256 offset = cellBitSize * uint256(int256((coord.y * config.dimX) + coord.x));
       uint256 byteOffset = offset / 8;
       uint256 bitOffset = offset % 8;
       bytes1 b = state[byteOffset];
