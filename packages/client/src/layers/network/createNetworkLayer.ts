@@ -1,4 +1,4 @@
-import { createWorld, EntityID } from "@latticexyz/recs";
+import { createWorld, EntityID, EntityIndex } from "@latticexyz/recs";
 import { Coord } from "@latticexyz/utils";
 import {
   createActionSystem,
@@ -56,14 +56,32 @@ export async function createNetworkLayer(config: GameConfig) {
   const actions = createActionSystem(world, txReduced$);
 
   // --- API ------------------------------------------------------------------------
-  function paint(entity: EntityID, value: number, coords: Coord[]) {
-    systems["conway.system.paint"].executeTyped(entity, value, coords);
+  function paint(entity: EntityIndex, value: number, coords: Coord[]) {
+    actions.add({
+      id: `paint ${entity} ${coords}` as EntityID,
+      requirement: () => true,
+      components: {},
+      execute: () => systems["conway.system.paint"].executeTyped(world.entities[entity], value, coords),
+      updates: () => [],
+    });
   }
   function tick() {
-    systems["conway.system.tick"].executeTyped(true);
+    actions.add({
+      id: `tick` as EntityID,
+      requirement: () => true,
+      components: {},
+      execute: () => systems["conway.system.tick"].executeTyped(true),
+      updates: () => [],
+    });
   }
-  function pause(entity: EntityID, pause: boolean) {
-    systems["conway.system.pause"].executeTyped(entity, pause);
+  function pause(entity: EntityIndex, pause: boolean) {
+    actions.add({
+      id: `pause ${entity}` as EntityID,
+      requirement: () => true,
+      components: {},
+      execute: () => systems["conway.system.pause"].executeTyped(world.entities[entity], pause),
+      updates: () => [],
+    });
   }
 
   // --- CONTEXT --------------------------------------------------------------------

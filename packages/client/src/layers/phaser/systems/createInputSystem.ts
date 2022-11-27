@@ -81,7 +81,7 @@ export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
       const painting = popPainting(target);
       if (!painting) return;
       const paintingCoords = painting.map((coord) => decodePosition(coord));
-      network.api.paint(world.entities[target], 1, paintingCoords);
+      network.api.paint(target, 1, paintingCoords);
     } else if (key.keyCode == Phaser.Input.Keyboard.KeyCodes.ESC) {
       // Clear painting
       popPainting(target);
@@ -104,7 +104,7 @@ export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
       // Toggle pause
       if (!config.pausable) return;
       const paused = getComponentValue(Paused, target)?.value;
-      network.api.pause(world.entities[target], !paused);
+      network.api.pause(target, !paused);
     }
   });
 
