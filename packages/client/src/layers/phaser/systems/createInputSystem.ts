@@ -45,6 +45,7 @@ export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
         cellPos.y < config.posY + config.dimY
       ) {
         target = entity;
+        if (!config.drawable) return;
         cellInPos = { x: cellPos.x - config.posX, y: cellPos.y - config.posY };
         break;
       }
