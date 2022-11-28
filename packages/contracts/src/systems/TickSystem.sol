@@ -6,7 +6,7 @@ import { getAddressById } from "solecs/utils.sol";
 
 import { GridId } from "../constants.sol";
 import { ConwayPC } from "../libraries/LibConwayPC.sol";
-import { ConwayEVM } from "../libraries/LibConwayEVM.sol";
+import { ConwayEVMUnpacked as ConwayEVM } from "../libraries/LibConwayEVM.sol";
 import { GridConfig, GridConfigComponent, ID as GridConfigComponentID } from "../components/GridConfigComponent.sol";
 import { PausedComponent, ID as PausedComponentID } from "../components/PausedComponent.sol";
 import { CanvasComponent, ID as CanvasComponentID } from "../components/CanvasComponent.sol";
@@ -15,7 +15,7 @@ import { TickPredeployAddr } from "../constants.sol";
 
 import { GridUsePrecompile } from "../constants.sol";
 
-// import "forge-std/console.sol";
+import "forge-std/console.sol";
 
 uint256 constant ID = uint256(keccak256("conway.system.tick"));
 
@@ -59,7 +59,9 @@ contract TickSystem is System {
         state = ConwayPC.step(uint256(int256(config.dimX)), uint256(int256(config.dimY)), config.cellBitSize, state);
       } else {
         require(config.cellBitSize == 1, "TickSystem: cellBitSize must be 1 for EVM implementation");
+        uint256 gl = gasleft();
         state = ConwayEVM.step(uint256(int256(config.dimX)), uint256(int256(config.dimY)), state);
+        console.log("ConwayEVM: used %s gas", gl - gasleft());
       }
       if (ii == config.stepsPerTick - 1) {
         conwayComponent.setValue(entity, state);
