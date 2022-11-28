@@ -5,12 +5,15 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
 import { GridId } from "../constants.sol";
-import { Conway } from "../libraries/LibConway.sol";
+import { ConwayPC } from "../libraries/LibConwayPC.sol";
+import { ConwayEVM } from "../libraries/LibConwayEVM.sol";
 import { GridConfig, GridConfigComponent, ID as GridConfigComponentID } from "../components/GridConfigComponent.sol";
 import { PausedComponent, ID as PausedComponentID } from "../components/PausedComponent.sol";
 import { CanvasComponent, ID as CanvasComponentID } from "../components/CanvasComponent.sol";
 import { ConwayStateComponent, ID as ConwayStateComponentID } from "../components/ConwayStateComponent.sol";
 import { TickPredeployAddr } from "../constants.sol";
+
+import { GridUsePrecompile } from "../constants.sol";
 
 // import "forge-std/console.sol";
 
@@ -52,7 +55,12 @@ contract TickSystem is System {
     // Execute steps
     uint256 ii = 0;
     while (true) {
-      state = Conway.step(uint256(int256(config.dimX)), uint256(int256(config.dimY)), config.cellBitSize, state);
+      if (GridUsePrecompile) {
+        state = ConwayPC.step(uint256(int256(config.dimX)), uint256(int256(config.dimY)), config.cellBitSize, state);
+      } else {
+        require(config.cellBitSize == 1, "TickSystem: cellBitSize must be 1 for EVM implementation");
+        state = ConwayEVM.step(uint256(int256(config.dimX)), uint256(int256(config.dimY)), state);
+      }
       if (ii == config.stepsPerTick - 1) {
         conwayComponent.setValue(entity, state);
         break;

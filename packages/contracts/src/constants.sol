@@ -13,5 +13,6 @@ int32 constant GridDimX = 128;
 int32 constant GridDimY = 128;
 
 bool constant GridPaused = false;
+bool constant GridUsePrecompile = true;
 
 address constant TickPredeployAddr = 0x42000000000000000000000000000000000000A0;

@@ -1,18 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity >=0.8.0;
 
-struct Grid {
-  uint256 x;
-  uint256 y;
-  uint256 cellBitSize;
-  bytes state;
-}
-
-library Conway {
-  function step(Grid memory grid) public view {
-    grid.state = step(grid.x, grid.y, grid.cellBitSize, grid.state);
-  }
-
+library ConwayPC {
   function step(
     uint256 x,
     uint256 y,
