@@ -47,7 +47,7 @@ export function createGridSystemCreator(
       const [width, height] = [gridConfig.dimX, gridConfig.dimY];
       const [gridX, gridY] = [gridConfig.posX, gridConfig.posY];
 
-      const unpackedState: number[][] = new Array(width * height);
+      const unpackedState: number[][] = new Array(stateBytes.length);
       for (let ii = 0; ii < stateBytes.length; ii++) {
         unpackedState[ii] = unpackByte(stateBytes[ii], cellBitSize);
       }
@@ -55,7 +55,7 @@ export function createGridSystemCreator(
 
       const update = () => {
         const startTime = Date.now();
-        for (let cellIdx = 0; cellIdx < state.length; cellIdx++) {
+        for (let cellIdx = 0; cellIdx < width * height; cellIdx++) {
           const cell = state[cellIdx];
           const [inX, inY] = [cellIdx % width, Math.floor(cellIdx / width)];
           const cellId = encodeCell(entity, { x: inX, y: inY });
