@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity >=0.8.0;
 
-bytes1 constant byte1 = bytes1(0x01);
-
 import "forge-std/console.sol";
 
 library ConwayEVMUnpacked {
@@ -12,7 +10,7 @@ library ConwayEVMUnpacked {
     bytes memory state
   ) public view returns (bytes memory) {
     uint256 gl = gasleft();
-    bytes memory unpacked = unpack(state);
+    uint256[] memory unpacked = unpack(state);
     console.log("ConwayEVM: unpack used %s gas", gl - gasleft());
     gl = gasleft();
     unpacked = stepUnpacked(w, h, unpacked);
@@ -28,9 +26,9 @@ library ConwayEVMUnpacked {
   function stepUnpacked(
     uint256 w,
     uint256 h,
-    bytes memory state
-  ) internal pure returns (bytes memory) {
-    bytes memory newState = new bytes(state.length);
+    uint256[] memory state
+  ) internal pure returns (uint256[] memory) {
+    uint256[] memory newState = new uint256[](state.length);
     for (uint256 ii = 0; ii < state.length; ii++) {
       uint256 x = ii % w;
       uint256 y = ii / w;
@@ -38,13 +36,13 @@ library ConwayEVMUnpacked {
         break;
       }
       uint256 neighbors = countNeighbors(state, w, h, x, y);
-      if (state[ii] == byte1) {
+      if (state[ii] == 1) {
         if (neighbors == 2 || neighbors == 3) {
-          newState[ii] = byte1;
+          newState[ii] = 1;
         }
       } else {
         if (neighbors == 3) {
-          newState[ii] = byte1;
+          newState[ii] = 1;
         }
       }
     }
@@ -52,7 +50,7 @@ library ConwayEVMUnpacked {
   }
 
   function countNeighbors(
-    bytes memory state,
+    uint256[] memory state,
     uint256 w,
     uint256 h,
     uint256 x,
@@ -69,7 +67,7 @@ library ConwayEVMUnpacked {
         if (!inBounds(w, h, nx, ny)) {
           continue;
         }
-        if (state[uint256(ny) * w + uint256(nx)] == byte1) {
+        if (state[uint256(ny) * w + uint256(nx)] == 1) {
           count++;
         }
       }
@@ -86,25 +84,25 @@ library ConwayEVMUnpacked {
     return x >= 0 && uint256(x) < w && y >= 0 && uint256(y) < h;
   }
 
-  function pack(bytes memory state) internal pure returns (bytes memory) {
+  function pack(uint256[] memory state) internal pure returns (bytes memory) {
     bytes memory packed = new bytes(state.length / 8);
     for (uint256 ii = 0; ii < state.length; ii += 8) {
       uint256 packedIdx = ii / 8;
       uint256 packedByte = 0;
       for (uint256 jj = 0; jj < 8; jj++) {
-        packedByte |= uint256(uint8(state[ii + jj] << (7 - jj)));
+        packedByte |= state[ii + jj] << (7 - jj);
       }
       packed[packedIdx] = bytes1(uint8(packedByte));
     }
     return packed;
   }
 
-  function unpack(bytes memory packed) internal pure returns (bytes memory) {
-    bytes memory state = new bytes(packed.length * 8);
+  function unpack(bytes memory packed) internal pure returns (uint256[] memory) {
+    uint256[] memory state = new uint256[](packed.length * 8);
     for (uint256 ii = 0; ii < packed.length; ii++) {
       uint256 packedByte = uint256(uint8(packed[ii]));
       for (uint256 jj = 0; jj < 8; jj++) {
-        state[ii * 8 + jj] = bytes1(uint8((packedByte >> (7 - jj)) & 1));
+        state[ii * 8 + jj] = (packedByte >> (7 - jj)) & 1;
       }
     }
     return state;
