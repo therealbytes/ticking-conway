@@ -32,10 +32,30 @@ library ConwayEVMUnpacked {
     for (uint256 ii = 0; ii < state.length; ii++) {
       uint256 x = ii % w;
       uint256 y = ii / w;
-      if (ii == state.length - 1 && !inBounds(w, h, int256(x), int256(y))) {
+      // inBounds(w, h, int256(x), int256(y))
+      if (ii == state.length - 1 && !(x < w && y < h)) {
         break;
       }
-      uint256 neighbors = countNeighbors(state, w, h, x, y);
+      // uint256 neighbors = countNeighbors(state, w, h, x, y);
+      uint256 neighbors = 0;
+      {
+        for (int256 dx = -1; dx <= 1; dx++) {
+          for (int256 dy = -1; dy <= 1; dy++) {
+            if (dx == 0 && dy == 0) {
+              continue;
+            }
+            int256 nx = int256(x) + dx;
+            int256 ny = int256(y) + dy;
+            // inBounds(w, h, nx, ny)
+            if (!(nx >= 0 && uint256(nx) < w && ny >= 0 && uint256(ny) < h)) {
+              continue;
+            }
+            if (state[uint256(ny) * w + uint256(nx)] == 1) {
+              neighbors++;
+            }
+          }
+        }
+      }
       if (state[ii] == 1) {
         if (neighbors == 2 || neighbors == 3) {
           newState[ii] = 1;
