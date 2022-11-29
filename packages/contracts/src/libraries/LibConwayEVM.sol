@@ -3,13 +3,26 @@ pragma solidity >=0.8.0;
 
 bytes1 constant byte1 = bytes1(0x01);
 
+import "forge-std/console.sol";
+
 library ConwayEVMUnpacked {
   function step(
     uint256 w,
     uint256 h,
     bytes memory state
-  ) public pure returns (bytes memory) {
-    return pack(stepUnpacked(w, h, unpack(state)));
+  ) public view returns (bytes memory) {
+    uint256 gl = gasleft();
+    bytes memory unpacked = unpack(state);
+    console.log("ConwayEVM: unpack used %s gas", gl - gasleft());
+    gl = gasleft();
+    unpacked = stepUnpacked(w, h, unpacked);
+    console.log("ConwayEVM: step used %s gas", gl - gasleft());
+    gl = gasleft();
+    state = pack(unpacked);
+    console.log("ConwayEVM: pack used %s gas", gl - gasleft());
+    gl = gasleft();
+    return state;
+    // return pack(stepUnpacked(w, h, unpack(state)));
   }
 
   function stepUnpacked(
