@@ -25,8 +25,8 @@ export const phaserConfig = {
     phaserSelector: "phaser-game",
     pinchSpeed: 1,
     wheelSpeed: 1,
-    maxZoom: 4,
-    minZoom: 1,
+    maxZoom: 8,
+    minZoom: 0.5,
   }),
   cullingChunkSize: gridRenderConfig.tileWidth * 16,
 };
