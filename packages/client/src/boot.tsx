@@ -45,9 +45,12 @@ async function bootGame() {
     const faucetUrl = params.get("faucet") || defaultConfig.faucetUrl;
 
     if (!privateKey) {
-      privateKey = localStorage.getItem("burnerWallet") || Wallet.createRandom().privateKey;
+      privateKey = localStorage.getItem("burnerWallet");
+      if (!privateKey) {
+        privateKey = Wallet.createRandom().privateKey;
+        drip(faucetUrl, ethersUtils.computeAddress(privateKey));
+      }
       localStorage.setItem("burnerWallet", privateKey);
-      drip(faucetUrl, ethersUtils.computeAddress(privateKey));
     }
 
     let networkLayerConfig;
