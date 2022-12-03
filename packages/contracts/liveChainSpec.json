@@ -1,0 +1,7 @@
+{
+  "chainId": 901,
+  "chainBlockTime": 1,
+  "chainGasLimit": 40000000,
+  "rpc": "https://l2.infra.conway.usebasic.dev",
+  "wsRpc": "wss://l2.infra.conway.usebasic.dev"
+}

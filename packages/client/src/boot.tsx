@@ -6,6 +6,7 @@ import { Time } from "./utils/time";
 import { createNetworkLayer as createNetworkLayerImport } from "./layers/network";
 import { createPhaserLayer as createPhaserLayerImport } from "./layers/phaser";
 import { Layers } from "./types";
+import { defaultConfig } from "./defaultConfig";
 import { Engine as EngineImport } from "./layers/react/engine/Engine";
 import { registerUIComponents as registerUIComponentsImport } from "./layers/react/components";
 import { Wallet } from "ethers";
@@ -30,14 +31,13 @@ async function bootGame() {
     mountReact.current(false);
 
     const params = new URLSearchParams(window.location.search);
-    const worldAddress = params.get("worldAddress");
+    const worldAddress = params.get("worldAddress") || defaultConfig.worldAddress;
     let privateKey = params.get("burnerWalletPrivateKey");
-    const chainIdString = params.get("chainId");
-    const jsonRpc = params.get("rpc") || undefined;
-    const wsRpc = params.get("wsRpc") || undefined; // || (jsonRpc && jsonRpc.replace("http", "ws"));
-    const snapshotServiceUrl = params.get("snapshot") || undefined;
-    const streamServiceUrl = params.get("stream") || undefined;
-    // const devMode = params.get("dev") === "false";
+    const chainIdString = params.get("chainId") || defaultConfig.chainIdString;
+    const jsonRpc = params.get("rpc") || defaultConfig.jsonRpc;
+    const wsRpc = params.get("wsRpc") || defaultConfig.wsRpc;
+    const snapshotServiceUrl = params.get("snapshot") || defaultConfig.snapshotServiceUrl;
+    const streamServiceUrl = params.get("stream") || defaultConfig.streamServiceUrl;
     const devMode = false;
     const initialBlockNumberString = params.get("initialBlockNumber");
     const initialBlockNumber = initialBlockNumberString ? parseInt(initialBlockNumberString) : 0;
