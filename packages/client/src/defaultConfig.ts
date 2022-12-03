@@ -5,4 +5,5 @@ export const defaultConfig = {
   wsRpc: "wss://l2.infra.conway.usebasic.dev",
   snapshotServiceUrl: "https://ecs-snapshot.infra.conway.usebasic.dev",
   streamServiceUrl: "https://ecs-stream.infra.conway.usebasic.dev",
+  faucetUrl: "https://faucet.infra.conway.usebasic.dev",
 };

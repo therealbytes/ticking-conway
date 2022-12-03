@@ -3,13 +3,14 @@ import { getComponentValue, removeComponent, setComponent } from "@latticexyz/re
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { Time } from "./utils/time";
+import { drip } from "./utils/faucet";
 import { createNetworkLayer as createNetworkLayerImport } from "./layers/network";
 import { createPhaserLayer as createPhaserLayerImport } from "./layers/phaser";
 import { Layers } from "./types";
 import { defaultConfig } from "./defaultConfig";
 import { Engine as EngineImport } from "./layers/react/engine/Engine";
 import { registerUIComponents as registerUIComponentsImport } from "./layers/react/components";
-import { Wallet } from "ethers";
+import { Wallet, utils as ethersUtils } from "ethers";
 
 // Assign variables that can be overridden by HMR
 let createNetworkLayer = createNetworkLayerImport;
@@ -31,7 +32,7 @@ async function bootGame() {
     mountReact.current(false);
 
     const params = new URLSearchParams(window.location.search);
-    const worldAddress = params.get("worldAddress") || defaultConfig.worldAddress;
+    const worldAddress = params.get("worldAddress") || defaultConfig.worldAddress;
     let privateKey = params.get("burnerWalletPrivateKey");
     const chainIdString = params.get("chainId") || defaultConfig.chainIdString;
     const jsonRpc = params.get("rpc") || defaultConfig.jsonRpc;
@@ -41,10 +42,12 @@ async function bootGame() {
     const devMode = false;
     const initialBlockNumberString = params.get("initialBlockNumber");
     const initialBlockNumber = initialBlockNumberString ? parseInt(initialBlockNumberString) : 0;
+    const faucetUrl = params.get("faucet") || defaultConfig.faucetUrl;
 
     if (!privateKey) {
       privateKey = localStorage.getItem("burnerWallet") || Wallet.createRandom().privateKey;
       localStorage.setItem("burnerWallet", privateKey);
+      drip(faucetUrl, ethersUtils.computeAddress(privateKey));
     }
 
     let networkLayerConfig;
