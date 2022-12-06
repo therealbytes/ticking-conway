@@ -1,6 +1,13 @@
-# Mudbasics
+# On-chain Conway's Game of Life
 
-A simple mud reference implementation
+### An on-chain interactive Conway's Game of Life board built on [ticking-optimism](https://github.com/therealbytes/ticking-optimism/tree/conway) with a modified [op-geth](https://github.com/therealbytes/conway-op-geth).
 
-## Getting started
-For a simple tutorial on how to use MUD, check out the slides of the [MUD workshop](https://www.figma.com/file/n4Ld4tpaiymotp9mRH5Te9/Mud-Workshop?node-id=0%3A1). Solutions for Quest 1 and Quest 2 can be found at [#1](https://github.com/latticexyz/mudbasics/pull/1) and [#2](https://github.com/latticexyz/mudbasics/pull/2).
+![Conway's Game of Life](/img/coway.png)
+
+**Run locally:**
+
+```bash
+make build
+make devnet-up
+make start
+```
