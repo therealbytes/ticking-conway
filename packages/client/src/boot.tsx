@@ -48,7 +48,9 @@ async function bootGame() {
       privateKey = localStorage.getItem("burnerWallet");
       if (!privateKey) {
         privateKey = Wallet.createRandom().privateKey;
-        drip(faucetUrl, ethersUtils.computeAddress(privateKey));
+        if (faucetUrl) {
+          drip(faucetUrl, ethersUtils.computeAddress(privateKey));
+        }
       }
       localStorage.setItem("burnerWallet", privateKey);
     }
