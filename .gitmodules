@@ -1,0 +1,4 @@
+[submodule "ticking-optimism"]
+	path = ticking-optimism
+	url = https://github.com/therealbytes/ticking-optimism
+	branch = conway
