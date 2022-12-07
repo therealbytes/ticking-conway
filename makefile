@@ -19,10 +19,9 @@ devnet-down:
 .PHONY: devnet-down
 
 devnet-clean-state:
-	cd ./ticking-optimism
-	rm -rf ./packages/contracts-bedrock/deployments/devnetL1
-	rm -rf ./.devnet
-	cd ./ops-bedrock && docker-compose down
+	rm -rf ./ticking-optimism/packages/contracts-bedrock/deployments/devnetL1
+	rm -rf ./ticking-optimism/.devnet
+	cd ./ticking-optimism/ops-bedrock && docker-compose down
 	docker volume ls --filter name=ops-bedrock --format='{{.Name}}' | xargs -r docker volume rm
 .PHONY: devnet-clean-state
 
